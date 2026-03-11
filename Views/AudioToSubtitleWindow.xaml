@@ -1,0 +1,339 @@
+<Window x:Class="VideoEditor.Views.AudioToSubtitleWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:VideoEditor.ViewModels"
+        mc:Ignorable="d"
+        Title="Audio to Subtitle Converter" Height="660" Width="530"
+        MinHeight="480" MinWidth="480"
+        MaxHeight="{x:Static SystemParameters.MaximizedPrimaryScreenHeight}"
+        Background="{StaticResource PrimaryBackground}"
+        Foreground="{StaticResource TextPrimary}"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="25">
+
+                <!-- ══ Header ══════════════════════════════════════════════ -->
+                <StackPanel Margin="0,0,0,20">
+                    <TextBlock Text="Audio to Subtitle" FontSize="24" FontWeight="Bold"
+                               Foreground="{StaticResource AccentColor}"/>
+                    <TextBlock Text="Convert audio files into timed subtitle files automatically."
+                               Foreground="{StaticResource TextSecondary}" FontSize="12"
+                               TextWrapping="Wrap" Margin="0,5,0,0"/>
+                </StackPanel>
+
+                <!-- ══ ⚠️ MODEL MISSING BANNER ══════════════════════════════
+                     Shown only when Local AI tab is active AND ggml model is absent
+                     ══════════════════════════════════════════════════════════ -->
+                <Border Visibility="{Binding ShowModelBanner,
+                            Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Background="#1C1200" BorderBrush="#E67E22" BorderThickness="1"
+                        CornerRadius="8" Margin="0,0,0,16" Padding="14,12">
+                    <StackPanel>
+
+                        <!-- Title row -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                            <TextBlock Text="⚠️" FontSize="18" Margin="0,0,8,0" VerticalAlignment="Center"/>
+                            <StackPanel>
+                                <TextBlock Text="AI Model File Not Found"
+                                           FontSize="15" FontWeight="Bold" Foreground="#F39C12"/>
+                                <TextBlock FontSize="12" Foreground="#BBBBBB" TextWrapping="Wrap">
+                                    <TextBlock.Text>
+                                        <MultiBinding StringFormat="No ggml-*.bin model was found in:  {0}">
+                                            <Binding Path="ModelInstallFolder"/>
+                                        </MultiBinding>
+                                    </TextBlock.Text>
+                                </TextBlock>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <!-- Whisper EXE missing sub-warning -->
+                        <Border Visibility="{Binding IsWhisperExeMissing,
+                                    Converter={StaticResource BooleanToVisibilityConverter}}"
+                                Background="#2A1A00" CornerRadius="5" Padding="10,7"
+                                Margin="0,0,0,10" BorderBrush="#C0392B" BorderThickness="1">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="❌" FontSize="13" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                                <TextBlock FontSize="12" Foreground="#FF8888" TextWrapping="Wrap">
+                                    <Run Text="Whisper engine (whisper-cli.exe) is also missing. Download it from "/>
+                                    <Hyperlink x:Name="WhisperExeLink" NavigateUri="https://github.com/ggerganov/whisper.cpp/releases"
+                                               RequestNavigate="Hyperlink_RequestNavigate">
+                                        <Run Text="github.com/ggerganov/whisper.cpp/releases" Foreground="#6EB6FF"/>
+                                    </Hyperlink>
+                                    <Run Text=" and place it in the app folder."/>
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Instructions -->
+                        <TextBlock FontSize="12" Foreground="#CCCCCC" TextWrapping="Wrap"
+                                   Margin="0,0,0,10" LineHeight="20">
+                            <Run Text="Download one model file below and set the paths in File -> Settings."/>
+                        </TextBlock>
+
+                        <!-- Model download table -->
+                        <Border Background="#111111" CornerRadius="6" Padding="1"
+                                BorderBrush="#333333" BorderThickness="1">
+                            <StackPanel>
+                                <!-- Header row -->
+                                <Grid Margin="10,7,10,4">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="75"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="MODEL" FontSize="10" FontWeight="Bold" Foreground="#666"/>
+                                    <TextBlock Grid.Column="1" Text="SIZE" FontSize="10" FontWeight="Bold" Foreground="#666"/>
+                                    <TextBlock Grid.Column="2" Text="DESCRIPTION" FontSize="10" FontWeight="Bold" Foreground="#666"/>
+                                    <TextBlock Grid.Column="3" Text="DOWNLOAD" FontSize="10" FontWeight="Bold" Foreground="#666"/>
+                                </Grid>
+                                <Border Height="1" Background="#222"/>
+                                <ItemsControl ItemsSource="{Binding AvailableModels}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Padding="10,7" BorderBrush="#1C1C1C" BorderThickness="0,0,0,1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter Property="Background" Value="#1A1A1A"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="70"/>
+                                                        <ColumnDefinition Width="75"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock Text="{Binding Name}" FontSize="13"
+                                                               FontWeight="SemiBold" Foreground="White"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="1" Text="{Binding Size}"
+                                                               FontSize="12" Foreground="#AAAAAA"
+                                                               VerticalAlignment="Center"/>
+                                                    <TextBlock Grid.Column="2" Text="{Binding Description}"
+                                                               FontSize="12" Foreground="#999999"
+                                                               TextWrapping="Wrap" VerticalAlignment="Center"/>
+                                                    <Button Grid.Column="3"
+                                                            Content="⬇ Download"
+                                                            Tag="{Binding DownloadUrl}"
+                                                            Click="DownloadModel_Click"
+                                                            Cursor="Hand"
+                                                            Margin="8,0,0,0"
+                                                            Padding="10,4"
+                                                            FontSize="12">
+                                                        <Button.Style>
+                                                            <Style TargetType="Button">
+                                                                <Setter Property="Background" Value="#0E5A8A"/>
+                                                                <Setter Property="Foreground" Value="White"/>
+                                                                <Setter Property="BorderThickness" Value="0"/>
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border Background="{TemplateBinding Background}"
+                                                                                    CornerRadius="4"
+                                                                                    Padding="{TemplateBinding Padding}">
+                                                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                                            </Border>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                                <Style.Triggers>
+                                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                                        <Setter Property="Background" Value="#1A7ABF"/>
+                                                                    </Trigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Button.Style>
+                                                    </Button>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Footer note -->
+                        <TextBlock Margin="0,10,0,0" FontSize="11" Foreground="#888888"
+                                   TextWrapping="Wrap" LineHeight="18">
+                            <Run Text="💡 Tip: "/>
+                            <Run Text="After downloading, restart the app or click Browse (…) above to locate the file manually. The "/>
+                            <Run Text="Base" FontWeight="Bold" Foreground="#CCCCCC"/>
+                            <Run Text=" model works for most use cases; use "/>
+                            <Run Text="Medium" FontWeight="Bold" Foreground="#CCCCCC"/>
+                            <Run Text=" for Indian languages like Hindi or Tamil."/>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ File Picker ══════════════════════════════════════════ -->
+                <Border Background="{StaticResource SecondaryBackground}" CornerRadius="8"
+                        Padding="15" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Audio Source" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding AudioFilePath}" IsReadOnly="True"
+                                     Style="{StaticResource {x:Type TextBox}}"
+                                     Background="Black" Foreground="White"
+                                     BorderBrush="{StaticResource BorderColor}"
+                                     Padding="8" VerticalContentAlignment="Center"/>
+                            <Button Grid.Column="1" Content="Browse" Command="{Binding BrowseCommand}"
+                                    Style="{StaticResource ModernButton}" Margin="10,0,0,0"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ══ File Details ══════════════════════════════════════════ -->
+                <StackPanel Margin="5,0,5,20"
+                            Visibility="{Binding HasFile, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Duration" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Text="{Binding FileDuration}" FontWeight="Bold"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="File Size" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                            <TextBlock Text="{Binding FileSizeFriendly}" FontWeight="Bold"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+                <!-- ══ AI Engine Settings ════════════════════════════════════ -->
+                <StackPanel>
+                    <TabControl Background="Transparent" BorderThickness="0" Margin="0,0,0,15">
+                        <TabControl.Resources>
+                            <Style TargetType="TabItem">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,2"/>
+                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                <Setter Property="Padding" Value="10,5"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TabItem">
+                                            <Border Name="Border"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    Background="{TemplateBinding Background}"
+                                                    Padding="{TemplateBinding Padding}">
+                                                <ContentPresenter ContentSource="Header"
+                                                                  HorizontalAlignment="Center"
+                                                                  VerticalAlignment="Center"/>
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsSelected" Value="True">
+                                                    <Setter TargetName="Border" Property="BorderBrush"
+                                                            Value="{StaticResource AccentColor}"/>
+                                                    <Setter Property="Foreground"
+                                                            Value="{StaticResource TextPrimary}"/>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TabControl.Resources>
+
+                        <!-- Local AI tab -->
+                        <TabItem Header="🤖 Local AI (whisper.cpp)"
+                                 IsSelected="{Binding UseLocalAI}">
+                            <Border Background="{StaticResource SecondaryBackground}"
+                                    CornerRadius="0,8,8,8" Padding="15"
+                                    BorderBrush="{StaticResource AccentColor}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="Whisper AI needs to be configured before local processing." FontSize="12"
+                                               Foreground="{StaticResource TextSecondary}" Margin="0,0,0,10" TextWrapping="Wrap"/>
+                                    
+                                    <Button Content="⚙️ Open Settings to Configure Paths" 
+                                            Command="{Binding OpenSettingsCommand}"
+                                            Style="{StaticResource ModernButton}" 
+                                            HorizontalAlignment="Left" Padding="15,8"/>
+                                </StackPanel>
+                            </Border>
+                        </TabItem>
+
+                        <!-- Cloud AI tab -->
+                        <TabItem Header="☁ Cloud AI (OpenAI)">
+                            <Border Background="{StaticResource SecondaryBackground}"
+                                    CornerRadius="0,8,8,8" Padding="15"
+                                    BorderBrush="{StaticResource AccentColor}" BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock Text="OpenAI API Key" FontSize="10"
+                                               Foreground="{StaticResource TextSecondary}" Margin="0,0,0,5"/>
+                                    <PasswordBox x:Name="ApiKeyBox" PasswordChanged="ApiKeyBox_PasswordChanged"
+                                                 Background="Black" Foreground="White"
+                                                 BorderBrush="{StaticResource BorderColor}" Padding="8"/>
+                                    <TextBlock Text="Word-for-word accuracy via cloud." FontSize="9"
+                                               FontStyle="Italic" Foreground="{StaticResource TextSecondary}"
+                                               Margin="0,5,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </TabItem>
+                    </TabControl>
+
+                    <!-- Language + Format -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,10,0">
+                            <TextBlock Text="Audio Language" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ComboBox ItemsSource="{Binding Languages}"
+                                      SelectedItem="{Binding SelectedLanguage}"
+                                      Style="{StaticResource {x:Type ComboBox}}"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Output Format" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ComboBox ItemsSource="{Binding Formats}"
+                                      SelectedItem="{Binding SelectedFormat}"
+                                      Style="{StaticResource {x:Type ComboBox}}"/>
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ══ Bottom: Progress + Start Button (pinned) ════════════════════ -->
+        <StackPanel Grid.Row="1" Background="{StaticResource PrimaryBackground}"
+                    Margin="25,0,25,25">
+            <StackPanel VerticalAlignment="Bottom" Margin="0,10,0,15">
+                <Grid Margin="0,0,0,5">
+                    <TextBlock Text="{Binding StatusMessage}" FontSize="12"
+                               Foreground="{StaticResource TextSecondary}"/>
+                    <TextBlock Text="{Binding ProgressText}" HorizontalAlignment="Right"
+                               FontSize="12" FontWeight="Bold"/>
+                </Grid>
+                <ProgressBar Value="{Binding ProgressValue}" Height="6" Background="Black"
+                             Foreground="{StaticResource AccentColor}" BorderThickness="0"/>
+            </StackPanel>
+
+            <Button Content="Start Conversion" Height="45" FontSize="16" FontWeight="Bold"
+                    Style="{StaticResource ModernButton}" Command="{Binding ConvertCommand}"
+                    IsEnabled="{Binding IsNotBusy}"/>
+        </StackPanel>
+    </Grid>
+</Window>

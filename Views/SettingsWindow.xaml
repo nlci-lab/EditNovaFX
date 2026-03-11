@@ -1,0 +1,113 @@
+<Window x:Class="VideoEditor.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:VideoEditor.ViewModels"
+        mc:Ignorable="d"
+        Title="Settings" Height="500" Width="600"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="{StaticResource PrimaryBackground}"
+        Foreground="{StaticResource TextPrimary}">
+
+    <Window.Resources>
+        <!-- Use the app's predefined standard styles implicitly where possible -->
+        <Style TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextSecondary}"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+        </Style>
+        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Background" Value="Black"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{StaticResource BorderColor}"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Application Settings" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+            <TextBlock Text="Configure the paths to external tools required for processing." FontSize="12"/>
+        </StackPanel>
+
+        <!-- Form fields -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <!-- FFmpeg -->
+                <GroupBox Header="FFmpeg Configuration" Foreground="{StaticResource AccentColor}" BorderBrush="{StaticResource BorderColor}" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Requires ffmpeg.exe and ffprobe.exe for rendering and media analysis." FontSize="11" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="FFmpeg Executable Path:"/>
+                        <Grid Margin="0,0,0,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding FfmpegPath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseFFmpegCommand}" Style="{StaticResource ModernButton}" Margin="5,0,0,0" Padding="10,2"/>
+                        </Grid>
+
+                        <TextBlock Text="FFprobe Executable Path:"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding FfprobePath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseFFprobeCommand}" Style="{StaticResource ModernButton}" Margin="5,0,0,0" Padding="10,2"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Whisper -->
+                <GroupBox Header="Whisper AI Configuration" Foreground="{StaticResource AccentColor}" BorderBrush="{StaticResource BorderColor}" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Local AI transcription requires a pre-compiled whisper.cpp executable." FontSize="11" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Whisper Executable Path:"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding WhisperExePath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseWhisperCommand}" Style="{StaticResource ModernButton}" Margin="5,0,0,0" Padding="10,2"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+
+                <!-- Subtitle Parser -->
+                <GroupBox Header="External Subtitle Parser" Foreground="{StaticResource AccentColor}" BorderBrush="{StaticResource BorderColor}" Padding="10" Margin="0,0,0,15">
+                    <StackPanel>
+                        <TextBlock Text="Required for USFM Scripture-based SRT generation." FontSize="11" Margin="0,0,0,10"/>
+                        
+                        <TextBlock Text="Subtitle Parser Executable Path:"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox Text="{Binding SubtitleParserPath, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Button Grid.Column="1" Content="..." Command="{Binding BrowseSubtitleParserCommand}" Style="{StaticResource ModernButton}" Margin="5,0,0,0" Padding="10,2"/>
+                        </Grid>
+                    </StackPanel>
+                </GroupBox>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Actions -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Cancel" Command="{Binding CancelCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ModernButton}" Background="#333333" Width="80" Height="30" Margin="0,0,10,0"/>
+            <Button Content="Save" Command="{Binding SaveSettingsCommand}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}" Style="{StaticResource ModernButton}" FontWeight="Bold" Width="80" Height="30"/>
+        </StackPanel>
+    </Grid>
+</Window>

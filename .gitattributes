@@ -1,0 +1,12 @@
+# Git LFS tracking for large binary files
+# These files are too large for regular Git (GitHub limit: 100 MB per file)
+
+# FFmpeg executables (~95 MB each) — tracked via Git LFS
+ffmpeg/*.exe filter=lfs diff=lfs merge=lfs -text
+
+# Whisper DLLs (small, regular git is fine)
+whisper-bin-x64/**/*.dll -text
+whisper-bin-x64/**/*.exe -text
+
+# AI model files — NEVER commit these (see .gitignore)
+*.bin -text

@@ -1,0 +1,809 @@
+<Window x:Class="VideoEditor.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:VideoEditor.ViewModels"
+        xmlns:controls="clr-namespace:VideoEditor.Controls"
+        xmlns:converters="clr-namespace:VideoEditor.Converters"
+        Title="EditNovaFX" 
+        Icon="/Assets/app_icon.png" 
+        Height="900" 
+        Width="1600"
+        Background="{StaticResource PrimaryBackground}"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        KeyDown="Window_KeyDown">
+
+    <Window.InputBindings>
+        <KeyBinding Key="Z" Modifiers="Control" Command="{Binding UndoCommand}"/>
+        <KeyBinding Key="Y" Modifiers="Control" Command="{Binding RedoCommand}"/>
+        <KeyBinding Key="S" Modifiers="Control" Command="{Binding SaveProjectCommand}"/>
+        <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewProjectCommand}"/>
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}"/>
+        <KeyBinding Key="I" Modifiers="Control" Command="{Binding ImportMediaCommand}"/>
+    </Window.InputBindings>
+    
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Top Bar -->
+        <DockPanel x:Name="TopBar" Grid.Row="0" Background="{StaticResource SecondaryBackground}">
+            <!-- <Image Source="/Assets/app_logo.png" Height="24" Margin="10,0,10,0" VerticalAlignment="Center" SnapsToDevicePixels="True"/> -->
+            <Menu Background="Transparent" Foreground="{StaticResource TextPrimary}">
+                <MenuItem Header="File">
+                    <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>
+                    <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}"/>
+                    <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
+                    <MenuItem Header="Save Project As..." Command="{Binding SaveProjectAsCommand}"/>
+                     <MenuItem Header="Settings..." Command="{Binding OpenSettingsCommand}"/>
+                    <MenuItem Header="Exit" Click="Exit_Click"/>
+                </MenuItem>
+                <MenuItem Header="Edit">
+                    <MenuItem Header="Undo" Command="{Binding UndoCommand}" InputGestureText="Ctrl+Z"/>
+                    <MenuItem Header="Redo" Command="{Binding RedoCommand}" InputGestureText="Ctrl+Y"/>
+                </MenuItem>
+                <MenuItem Header="Import">
+                    <MenuItem Header="Import Media..." Command="{Binding ImportMediaCommand}"/>
+                    <MenuItem Header="Import Subtitle..." Command="{Binding ImportSubtitleCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Export">
+                    <MenuItem Header="Export Video..." Command="{Binding ExportVideoCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Tools">
+                    <MenuItem Header="Audio to Subtitle" Command="{Binding OpenAudioToSubtitleCommand}"/>
+                    <MenuItem Header="Scripture Subtitle Generator" Command="{Binding OpenScriptureSubtitleGeneratorCommand}"/>
+                    <!-- <MenuItem Header="Subtitle Converter" Command="{Binding OpenSubtitleConverterCommand}"/> -->
+                    <MenuItem Header="AI Publisher &amp; Share" Command="{Binding OpenPublisherCommand}"/>
+                    <MenuItem Header="Setup YouTube API..." Command="{Binding OpenYouTubeSetupCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Timeline">
+                    <MenuItem Header="Add Video Track" Command="{Binding AddTrackCommand}" CommandParameter="Video"/>
+                    <MenuItem Header="Add Audio Track" Command="{Binding AddTrackCommand}" CommandParameter="Audio"/>
+                </MenuItem>
+                <MenuItem Header="View">
+                    <MenuItem Header="Fullscreen" Click="ToggleFullScreenFromMenu" InputGestureText="F11"/>
+                </MenuItem>
+                <MenuItem Header="Help">
+                    <MenuItem Header="Getting Started" Click="OpenHelp_Click" Tag="Getting Started"/>
+                    <MenuItem Header="How to Edit a Video" Click="OpenHelp_Click" Tag="Getting Started"/>
+                    <MenuItem Header="Import Media Guide" Click="OpenHelp_Click" Tag="Importing Media"/>
+                    <MenuItem Header="Timeline Guide" Click="OpenHelp_Click" Tag="Timeline Guide"/>
+                    <MenuItem Header="Audio &amp; Subtitle Guide" Click="OpenHelp_Click" Tag="Audio &amp; Subtitles"/>
+                    <MenuItem Header="AI Features Guide" Click="OpenHelp_Click" Tag="AI Features"/>
+                    <MenuItem Header="Export &amp; Publish Guide" Click="OpenHelp_Click" Tag="Export &amp; Publish"/>
+                    <MenuItem Header="Scripture Subtitle Guide" Click="OpenHelp_Click" Tag="Scripture Subtitles"/>
+                    <MenuItem Header="Contact Support" Click="OpenHelp_Click" Tag="Support"/>
+                    <Separator/>
+                    <MenuItem Header="Keyboard Shortcuts" Click="OpenHelp_Click" Tag="Keyboard Shortcuts"/>
+                    <MenuItem Header="Troubleshooting" Click="OpenHelp_Click" Tag="Troubleshooting"/>
+                    <Separator/>
+                    <MenuItem Header="About EditNovaFX" Click="OpenHelp_Click" Tag="About"/>
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+        <!-- Main Content Area -->
+        <Grid x:Name="MainArea" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition x:Name="PreviewRow" Height="2*"/>
+                <RowDefinition x:Name="TimelineSplitterRow" Height="5"/>
+                <RowDefinition x:Name="TimelineRow" Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="MediaLibCol" Width="250"/>
+                <ColumnDefinition x:Name="MediaLibSplitterCol" Width="5"/>
+                <ColumnDefinition x:Name="PreviewCol" Width="*"/>
+                <ColumnDefinition x:Name="PropertiesSplitterCol" Width="5"/>
+                <ColumnDefinition x:Name="PropertiesCol" Width="300"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- 1. Media Library Panel (Top Left) -->
+            <Border x:Name="MediaLibraryPanel" Grid.Row="0" Grid.Column="0" Background="{StaticResource SecondaryBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,1,1" Margin="0,0,0,5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                            <Grid Grid.Row="0" Margin="10,10,10,0">
+                                <TextBlock Text="Media Library" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                     <Button Command="{Binding ImportMediaCommand}" ToolTip="Import Media" Style="{StaticResource ModernButton}" Padding="4" Background="Transparent" Margin="0,0,5,0">
+                                        <TextBlock Text="📁+" FontSize="16"/>
+                                     </Button>
+                                     <Button Command="{Binding RemoveMediaItemCommand}" ToolTip="Remove selected" Style="{StaticResource ModernButton}" Padding="4" Background="Transparent" Foreground="#CC0000">
+                                        <TextBlock Text="🗑" FontSize="16"/>
+                                     </Button>
+                                </StackPanel>
+                            </Grid>
+
+                            <Grid Grid.Row="1">
+                                <TabControl x:Name="MediaLibraryTabs" Background="Transparent" BorderThickness="0" Margin="5" Style="{StaticResource ModernTabControl}">
+                                    <TabItem Header="Videos">
+                                        <Grid>
+                                            <TextBlock Text="Drag files or folders here" 
+                                                       Foreground="#555555" 
+                                                       HorizontalAlignment="Center" 
+                                                       VerticalAlignment="Center" 
+                                                       TextAlignment="Center"
+                                                       Visibility="{Binding MediaLibrary.Count, Converter={StaticResource ZeroToCollapsedConverter}, ConverterParameter=Inverted}"/>
+                                            <ListBox x:Name="VideosListBox"
+                                                     ItemsSource="{Binding VideoItems}"
+                                                     SelectedItem="{Binding SelectedMediaItem}"
+                                                     Style="{StaticResource ModernListBox}"
+                                                     MouseDoubleClick="MediaLibraryListBox_MouseDoubleClick"
+                                                     PreviewMouseLeftButtonDown="MediaLibraryListBox_PreviewMouseLeftButtonDown"
+                                                     PreviewMouseMove="MediaLibraryListBox_PreviewMouseMove">
+                                                <ListBox.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Add to Timeline" Command="{Binding AddToTimelineCommand}"/>
+                                                        <MenuItem Header="Remove" Command="{Binding RemoveMediaItemCommand}"/>
+                                                    </ContextMenu>
+                                                </ListBox.ContextMenu>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="5">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Grid>
+                                    </TabItem>
+                                    <TabItem Header="Audio">
+                                        <Grid>
+                                            <ListBox x:Name="AudioListBox"
+                                                     ItemsSource="{Binding AudioItems}"
+                                                     SelectedItem="{Binding SelectedMediaItem}"
+                                                     Style="{StaticResource ModernListBox}"
+                                                     MouseDoubleClick="MediaLibraryListBox_MouseDoubleClick"
+                                                     PreviewMouseLeftButtonDown="MediaLibraryListBox_PreviewMouseLeftButtonDown"
+                                                     PreviewMouseMove="MediaLibraryListBox_PreviewMouseMove">
+                                                <ListBox.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Add to Timeline" Command="{Binding AddToTimelineCommand}"/>
+                                                        <MenuItem Header="Remove" Command="{Binding RemoveMediaItemCommand}"/>
+                                                    </ContextMenu>
+                                                </ListBox.ContextMenu>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="5">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                            <TextBlock Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Grid>
+                                    </TabItem>
+                                    <TabItem Header="Images">
+                                        <Grid>
+                                            <ListBox x:Name="ImagesListBox"
+                                                     ItemsSource="{Binding ImageItems}"
+                                                     SelectedItem="{Binding SelectedMediaItem}"
+                                                     Style="{StaticResource ModernListBox}"
+                                                     MouseDoubleClick="MediaLibraryListBox_MouseDoubleClick"
+                                                     PreviewMouseLeftButtonDown="MediaLibraryListBox_PreviewMouseLeftButtonDown"
+                                                     PreviewMouseMove="MediaLibraryListBox_PreviewMouseMove">
+                                                <ListBox.ContextMenu>
+                                                    <ContextMenu>
+                                                        <MenuItem Header="Add to Timeline" Command="{Binding AddToTimelineCommand}"/>
+                                                        <MenuItem Header="Remove" Command="{Binding RemoveMediaItemCommand}"/>
+                                                    </ContextMenu>
+                                                </ListBox.ContextMenu>
+                                                <ListBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Margin="5">
+                                                            <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+                                                            <TextBlock Text="Image" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ListBox.ItemTemplate>
+                                            </ListBox>
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </Grid>
+
+                            <StackPanel Grid.Row="2" Margin="5">
+                                <Button Content="Add to Timeline" 
+                                        Command="{Binding AddToTimelineCommand}"
+                                        Style="{StaticResource ModernButton}"/>
+                            </StackPanel>
+                </Grid>
+            </Border>
+
+            <GridSplitter x:Name="MediaLibSplitter" Grid.Row="0" Grid.Column="1" Width="5" HorizontalAlignment="Stretch" 
+                          Background="{StaticResource BorderColor}"/>
+
+            <!-- 2. Preview Area (Top Center) -->
+            <Border x:Name="PreviewPanel" Grid.Row="0" Grid.Column="2" Background="{StaticResource TertiaryBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Margin="5">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition x:Name="PreviewHeaderRow" Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition x:Name="PreviewFooterRow" Height="Auto"/>
+                    </Grid.RowDefinitions>
+                            <TextBlock x:Name="PreviewTitle" Grid.Row="0" Text="Preview" FontSize="16" FontWeight="Bold" 
+                                       Margin="10" Foreground="{StaticResource TextPrimary}"/>
+
+                            <!-- Video Preview Area -->
+                            <Border x:Name="VideoBorder" Grid.Row="1" Background="Black" Margin="10" ClipToBounds="True">
+                                <Viewbox Stretch="Uniform">
+                                    <Grid x:Name="PreviewCanvas" 
+                                          Width="{Binding CurrentProject.OutputWidth}" 
+                                          Height="{Binding CurrentProject.OutputHeight}"
+                                          Background="Black">
+                                          
+                                        <!-- MediaElement for actual video/audio playback -->
+                                        <MediaElement x:Name="PreviewMediaElement"
+                                                     LoadedBehavior="Manual"
+                                                     UnloadedBehavior="Stop"
+                                                     ScrubbingEnabled="True"
+                                                     Stretch="Uniform"
+                                                     MediaEnded="PreviewMediaElement_MediaEnded"/>
+
+                                        <Image x:Name="PreviewImage"
+                                               Stretch="Uniform"
+                                               Visibility="Collapsed"/>
+
+                                        <TextBlock x:Name="PreviewStatus" 
+                                                   Foreground="Lime" 
+                                                   FontSize="12" 
+                                                   VerticalAlignment="Top" 
+                                                   HorizontalAlignment="Left" 
+                                                   Margin="10" 
+                                                   IsHitTestVisible="False"
+                                                   FontWeight="Bold"/>
+
+                                        <!-- Subtitle Overlays (Multiple) -->
+                                        <ItemsControl ItemsSource="{Binding ActiveSubtitlePreviews}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <Grid Width="{Binding DataContext.CurrentProject.OutputWidth, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                                          Height="{Binding DataContext.CurrentProject.OutputHeight, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Grid x:Name="SubtitleContainer" 
+                                                          HorizontalAlignment="Left" 
+                                                          VerticalAlignment="{Binding VerticalAlignment}" 
+                                                          Margin="{Binding Margin}"
+                                                          Tag="{Binding Track}"
+                                                          Background="Transparent">
+                                                        
+                                                        <TextBlock x:Name="SubtitleText"
+                                                                   Text="{Binding Text}"
+                                                                   Width="{Binding Width, Converter={StaticResource SubtitleWidthConverter}}"
+                                                                   Foreground="{Binding Color, Converter={StaticResource ColorToBrushConverter}}"
+                                                                   FontFamily="{Binding Font}"
+                                                                   FontSize="{Binding FontSize}"
+                                                                   FontWeight="{Binding IsBold, Converter={StaticResource BoldToWeightConverter}}"
+                                                                   FontStyle="{Binding IsItalic, Converter={StaticResource ItalicToStyleConverter}}"
+                                                                   TextWrapping="Wrap"
+                                                                   TextAlignment="{Binding TextAlignment}"
+                                                                   HorizontalAlignment="Left"
+                                                                   VerticalAlignment="Top"
+                                                                   Background="Transparent"
+                                                                   Tag="{Binding Track}"
+                                                                   PreviewMouseLeftButtonDown="Subtitle_PreviewMouseLeftButtonDown"
+                                                                   PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                   PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"
+                                                                   MouseEnter="Subtitle_MouseEnter"
+                                                                   MouseLeave="Subtitle_MouseLeave">
+                                                            <TextBlock.Effect>
+                                                                <DropShadowEffect Color="{Binding ShadowColor}" 
+                                                                                 ShadowDepth="{Binding ShadowWidth}" 
+                                                                                 BlurRadius="{Binding OutlineWidth}"
+                                                                                 Opacity="0.8"/>
+                                                            </TextBlock.Effect>
+                                                        </TextBlock>
+                                                        
+                                                        <Canvas x:Name="SelectionCanvas"
+                                                                Width="{Binding ElementName=SubtitleText, Path=ActualWidth}"
+                                                                Height="{Binding ElementName=SubtitleText, Path=ActualHeight}"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Top"
+                                                                Visibility="{Binding IsSelected, Converter={StaticResource BooleanToVisibilityConverter}, FallbackValue=Collapsed}"
+                                                                IsHitTestVisible="True">
+                                                            
+                                                            <Border BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2" 
+                                                                    Width="{Binding ElementName=SubtitleText, Path=ActualWidth}"
+                                                                    Height="{Binding ElementName=SubtitleText, Path=ActualHeight}"
+                                                                    Canvas.Left="0"
+                                                                    Canvas.Top="0"
+                                                                    IsHitTestVisible="False">
+                                                            </Border>
+                                                            
+                                                            <Border x:Name="TopLeftCorner" 
+                                                                    Width="12" Height="12" 
+                                                                    Background="White" 
+                                                                    BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2"
+                                                                    CornerRadius="2"
+                                                                    Canvas.Left="-6" 
+                                                                    Canvas.Top="-6" 
+                                                                    Cursor="SizeNWSE" 
+                                                                    Tag="{Binding Track}"
+                                                                    PreviewMouseLeftButtonDown="Subtitle_ResizeHandle_MouseDown"
+                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                    PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"/>
+                                                            
+                                                            <Border x:Name="TopRightCorner" 
+                                                                    Width="12" Height="12" 
+                                                                    Background="White" 
+                                                                    BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2"
+                                                                    CornerRadius="2"
+                                                                    Canvas.Left="{Binding ElementName=SubtitleText, Path=ActualWidth, Converter={StaticResource OffsetConverter}, ConverterParameter=-6}" 
+                                                                    Canvas.Top="-6" 
+                                                                    Cursor="SizeNESW" 
+                                                                    Tag="{Binding Track}"
+                                                                    PreviewMouseLeftButtonDown="Subtitle_ResizeHandle_MouseDown"
+                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                    PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"/>
+                                                            
+                                                            <Border x:Name="BottomLeftCorner" 
+                                                                    Width="12" Height="12" 
+                                                                    Background="White" 
+                                                                    BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2"
+                                                                    CornerRadius="2"
+                                                                    Canvas.Left="-6" 
+                                                                    Canvas.Top="{Binding ElementName=SubtitleText, Path=ActualHeight, Converter={StaticResource OffsetConverter}, ConverterParameter=-6}" 
+                                                                    Cursor="SizeNESW" 
+                                                                    Tag="{Binding Track}"
+                                                                    PreviewMouseLeftButtonDown="Subtitle_ResizeHandle_MouseDown"
+                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                    PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"/>
+                                                            
+                                                            <Border x:Name="BottomRightCorner" 
+                                                                    Width="12" Height="12" 
+                                                                    Background="White" 
+                                                                    BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2"
+                                                                    CornerRadius="2"
+                                                                    Canvas.Left="{Binding ElementName=SubtitleText, Path=ActualWidth, Converter={StaticResource OffsetConverter}, ConverterParameter=-6}" 
+                                                                    Canvas.Top="{Binding ElementName=SubtitleText, Path=ActualHeight, Converter={StaticResource OffsetConverter}, ConverterParameter=-6}" 
+                                                                    Cursor="SizeNWSE" 
+                                                                    Tag="{Binding Track}"
+                                                                    PreviewMouseLeftButtonDown="Subtitle_ResizeHandle_MouseDown"
+                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                    PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"/>
+                                                            
+                                                            <Border x:Name="RightEdgeHandle" 
+                                                                    Width="8" Height="30" 
+                                                                    Background="White" 
+                                                                    BorderBrush="#00C1D4" 
+                                                                    BorderThickness="2"
+                                                                    CornerRadius="3"
+                                                                    Canvas.Left="{Binding ElementName=SubtitleText, Path=ActualWidth, Converter={StaticResource OffsetConverter}, ConverterParameter=-4}" 
+                                                                    Canvas.Top="{Binding ElementName=SubtitleText, Path=ActualHeight, Converter={StaticResource HalfConverter}, ConverterParameter=-15}" 
+                                                                    Cursor="SizeWE" 
+                                                                    Tag="{Binding Track}"
+                                                                    PreviewMouseLeftButtonDown="Subtitle_ResizeHandle_MouseDown"
+                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
+                                                                    PreviewMouseLeftButtonUp="Subtitle_PreviewMouseLeftButtonUp"/>
+                                                        </Canvas>
+                                                    </Grid>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                        
+                                        <Image Source="{Binding LogoPath}"
+                                               Width="{Binding LogoScale, ConverterParameter=100, Converter={StaticResource LogoSizeConverter}}"
+                                               Stretch="Uniform"
+                                               HorizontalAlignment="Left"
+                                               VerticalAlignment="Top"
+                                               Margin="{Binding LogoMargin}"
+                                               Opacity="0.8"
+                                               Visibility="{Binding LogoPath, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}"
+                                               Cursor="SizeAll"
+                                               PreviewMouseLeftButtonDown="Logo_PreviewMouseLeftButtonDown"
+                                               PreviewMouseMove="Logo_PreviewMouseMove"
+                                               PreviewMouseLeftButtonUp="Logo_PreviewMouseLeftButtonUp">
+                                            <Image.Effect>
+                                                <DropShadowEffect ShadowDepth="2" BlurRadius="2"/>
+                                            </Image.Effect>
+                                        </Image>
+                                        
+                                        <!-- Removed Source-based placeholder -->
+                                        
+                                        <!-- Selection Overlay (Quick Info) -->
+                                        <Border Background="#CC1E1E1E" 
+                                                VerticalAlignment="Bottom"
+                                                HorizontalAlignment="Right"
+                                                Margin="10,0,10,45"
+                                                Padding="8,4"
+                                                CornerRadius="4"
+                                                IsHitTestVisible="False"
+                                                Visibility="{Binding SelectedMediaItem, Converter={StaticResource NotNullToVisibilityConverter}, FallbackValue=Collapsed}">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="{Binding SelectedMediaItem.Name}" 
+                                                           Foreground="#00C1D4" 
+                                                           FontSize="10"
+                                                           FontWeight="Bold"
+                                                           MaxWidth="150"
+                                                           TextTrimming="CharacterEllipsis"/>
+                                                <TextBlock Foreground="#AAAAAA" FontSize="10" Margin="5,0,0,0">
+                                                    <Run Text="("/>
+                                                    <Run Text="{Binding SelectedMediaItem.Type}"/>
+                                                    <Run Text=")"/>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </Border>
+                                    </Grid>
+                                </Viewbox>
+                            </Border>
+
+                            <StackPanel x:Name="PreviewControlsBar" Grid.Row="2" Orientation="Horizontal" 
+                                        HorizontalAlignment="Center" Margin="10">
+                                <Button x:Name="BtnRestart" Content="⏮" Width="40" Height="30" 
+                                        Click="BtnRestart_Click"
+                                        Style="{StaticResource ModernButton}" Margin="2"/>
+                                <Button x:Name="BtnPlayPause" Content="▶" Width="50" Height="30" 
+                                        Click="BtnPlayPause_Click"
+                                        Style="{StaticResource ModernButton}" Margin="2"/>
+                                <Button x:Name="BtnStop" Content="⏹" Width="40" Height="30" 
+                                        Click="BtnStop_Click"
+                                        Style="{StaticResource ModernButton}" Margin="2"/>
+                                <TextBlock x:Name="TxtPosition" Text="00:00:00" 
+                                           VerticalAlignment="Center" Margin="10,0,0,0"
+                                           Foreground="{StaticResource TextPrimary}"/>
+                                <TextBlock Text=" / " 
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TextSecondary}"/>
+                                <TextBlock x:Name="TxtDuration" Text="00:00:00" 
+                                           VerticalAlignment="Center"
+                                           Foreground="{StaticResource TextPrimary}"/>
+                                <Button x:Name="BtnFullscreen" Content="⛶" Width="40" Height="30" 
+                                        Click="ToggleFullScreenFromMenu"
+                                        ToolTip="Full Screen (F11)"
+                                        Style="{StaticResource ModernButton}" Margin="15,2,2,2"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+            <!-- 3. Timeline Area (Bottom) -->
+            <GridSplitter x:Name="TimelineSplitter" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" Height="5" HorizontalAlignment="Stretch" 
+                           Background="{StaticResource BorderColor}"/>
+
+            <Border x:Name="TimelinePanel" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="{StaticResource TertiaryBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Margin="5">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Header & Tools -->
+                        <Grid Grid.Row="0" Margin="10,5">
+                            <TextBlock Text="Timeline" FontSize="16" FontWeight="Bold" 
+                                       VerticalAlignment="Center" Foreground="{StaticResource TextPrimary}"/>
+                            
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock Text="🔍" VerticalAlignment="Center" Margin="0,0,5,0" Foreground="{StaticResource TextSecondary}"/>
+                                <Slider Width="100" VerticalAlignment="Center" Margin="0,0,20,0"
+                                        Minimum="1" Maximum="100" 
+                                        Value="{Binding ZoomLevel}" 
+                                        ToolTip="Timeline Zoom"/>
+
+                                <ToggleButton Content="Ripple" 
+                                              IsChecked="{Binding RippleEditingEnabled}"
+                                              Style="{StaticResource ModernToggleButton}"
+                                              Margin="0,0,10,0"/>
+
+                                <Button Content="+ Track" 
+                                        Style="{StaticResource ModernButton}" Margin="0,0,5,0"
+                                        Background="#2D2D30">
+                                    <Button.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="Add Video Track" Command="{Binding AddTrackCommand}" CommandParameter="Video"/>
+                                            <MenuItem Header="Add Audio Track" Command="{Binding AddTrackCommand}" CommandParameter="Audio"/>
+                                        </ContextMenu>
+                                    </Button.ContextMenu>
+                                </Button>
+                                <Button Content="✂ Split" Command="{Binding SplitClipCommand}" 
+                                        Style="{StaticResource ModernButton}" Margin="0,0,5,0"/>
+                                <Button Content="◀ Move" Command="{Binding MoveClipLeftCommand}" 
+                                        CommandParameter="{Binding SelectedClip}" 
+                                        Style="{StaticResource ModernButton}" Margin="0,0,5,0"/>
+                                <Button Content="Move ▶" Command="{Binding MoveClipRightCommand}" 
+                                        CommandParameter="{Binding SelectedClip}" 
+                                        Style="{StaticResource ModernButton}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Custom Data-Driven Timeline Control -->
+                        <ScrollViewer x:Name="TimelineScrollViewer" Grid.Row="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#252526">
+                            <controls:TimelineControl 
+                                Tracks="{Binding TimelineTracks}" 
+                                AllowDrop="True"
+                                Drop="TimelineControl_Drop" 
+                                PixelsPerSecond="{Binding ZoomLevel}"
+                                PlayheadPosition="{Binding PlayheadPosition}"
+                                SelectedClip="{Binding SelectedClip, Mode=TwoWay}"
+                                Width="{Binding TimelineWidth}"
+                                MinHeight="300"
+                                VerticalOffset="{Binding VerticalOffset, ElementName=TimelineScrollViewer}"
+                                VerticalAlignment="Top"/>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+            <!-- 4. Properties Panel (Full Right) -->
+            <GridSplitter x:Name="PropertiesSplitter" Grid.Row="0" Grid.RowSpan="3" Grid.Column="3" Width="5" HorizontalAlignment="Stretch" 
+                          Background="{StaticResource BorderColor}"/>
+
+            <Border x:Name="PropertiesPanel" Grid.Row="0" Grid.RowSpan="3" Grid.Column="4" Background="{StaticResource SecondaryBackground}" 
+                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Panel Header -->
+                    <Border Grid.Row="0" Background="#2D2D30" BorderBrush="{StaticResource BorderColor}" BorderThickness="0,0,0,1" Padding="10,8">
+                        <TextBlock Text="Properties" FontSize="16" FontWeight="Bold" Foreground="{StaticResource TextPrimary}"/>
+                    </Border>
+
+                    <!-- Scrollable Expander Sections -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+
+                            <!-- ── Project Settings ── -->
+                            <Expander Style="{StaticResource PropertiesExpander}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="⚙  Project Settings" FontSize="16" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <TextBlock Text="Project Name:" Margin="0,0,0,3" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    <TextBox Text="{Binding CurrentProject.Name}" Padding="5,4" Margin="0,0,0,8"/>
+
+                                    <TextBlock Text="Output Resolution:" Margin="0,0,0,3" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    <ComboBox SelectedIndex="1" Margin="0,0,0,8">
+                                        <ComboBoxItem Content="1280x720 (720p)"/>
+                                        <ComboBoxItem Content="1920x1080 (1080p)"/>
+                                        <ComboBoxItem Content="2560x1440 (1440p)"/>
+                                        <ComboBoxItem Content="3840x2160 (4K)"/>
+                                    </ComboBox>
+
+                                    <TextBlock Text="Frame Rate:" Margin="0,0,0,3" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                                    <ComboBox SelectedIndex="1">
+                                        <ComboBoxItem Content="24 fps"/>
+                                        <ComboBoxItem Content="30 fps"/>
+                                        <ComboBoxItem Content="60 fps"/>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- ── Subtitle Tracks ── -->
+                            <Expander Style="{StaticResource PropertiesExpander}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="💬  Subtitle Tracks" FontSize="16" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <!-- Subtitle Style - only when a track is selected -->
+                                    <StackPanel Visibility="{Binding SelectedSubtitleTrack, Converter={StaticResource NotNullToVisibilityConverter}}">
+                                        <Border Background="#1F3040" CornerRadius="3" Padding="6,4" Margin="0,0,0,8">
+                                            <TextBlock Text="{Binding SelectedSubtitleTrack.Name, StringFormat='Editing: {0}'}"
+                                                       FontSize="10" Foreground="{StaticResource AccentColor}"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </Border>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="5"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Font" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,2"/>
+                                            <ComboBox Grid.Row="1" Grid.Column="0" ItemsSource="{Binding Fonts}" SelectedItem="{Binding SelectedFont}" Margin="0,0,0,6"/>
+
+                                            <TextBlock Grid.Row="0" Grid.Column="2" Text="Size" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,2"/>
+                                            <ComboBox Grid.Row="1" Grid.Column="2" ItemsSource="{Binding FontSizes}" SelectedItem="{Binding SelectedFontSize}" Margin="0,0,0,6"/>
+
+                                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Color" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,2"/>
+                                            <ComboBox Grid.Row="3" Grid.Column="0" ItemsSource="{Binding FontColors}" SelectedItem="{Binding SelectedFontColor}" Margin="0,0,0,0">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="13" Height="13" Margin="0,0,5,0"
+                                                                    Background="{Binding Converter={StaticResource ColorToBrushConverter}}"
+                                                                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1"/>
+                                                            <TextBlock Text="{Binding}" FontSize="11"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <TextBlock Grid.Row="2" Grid.Column="2" Text="Align" FontSize="10" Foreground="{StaticResource TextSecondary}" Margin="0,0,0,2"/>
+                                            <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{Binding Alignments}" SelectedItem="{Binding SelectedAlignment}"/>
+                                        </Grid>
+
+                                        <!-- Bold / Italic -->
+                                        <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                            <CheckBox Content="Bold" IsChecked="{Binding IsFontBold}" Foreground="White" Margin="0,0,14,0" FontSize="11"/>
+                                            <CheckBox Content="Italic" IsChecked="{Binding IsFontItalic}" Foreground="White" FontSize="11"/>
+                                        </StackPanel>
+
+                                        <!-- Outline -->
+                                        <DockPanel Margin="0,0,0,4">
+                                            <TextBlock Text="Outline" DockPanel.Dock="Left" FontSize="10" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center" Width="46"/>
+                                            <TextBlock Text="{Binding OutlineWidth, StringFormat={}{0:F1}}" DockPanel.Dock="Right" Width="28" TextAlignment="Right" FontSize="10" VerticalAlignment="Center"/>
+                                            <Slider Minimum="0" Maximum="10" Value="{Binding OutlineWidth}" TickFrequency="0.5" IsSnapToTickEnabled="True"/>
+                                        </DockPanel>
+
+                                        <!-- Shadow -->
+                                        <DockPanel Margin="0,0,0,4">
+                                            <TextBlock Text="Shadow" DockPanel.Dock="Left" FontSize="10" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center" Width="46"/>
+                                            <TextBlock Text="{Binding ShadowWidth, StringFormat={}{0:F1}}" DockPanel.Dock="Right" Width="28" TextAlignment="Right" FontSize="10" VerticalAlignment="Center"/>
+                                            <Slider Minimum="0" Maximum="10" Value="{Binding ShadowWidth}" TickFrequency="0.5" IsSnapToTickEnabled="True"/>
+                                        </DockPanel>
+
+                                        <DockPanel Margin="0,0,0,8">
+                                            <TextBlock Text="Shad. Clr" DockPanel.Dock="Left" FontSize="10" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center" Width="46"/>
+                                            <ComboBox ItemsSource="{Binding FontColors}" SelectedItem="{Binding SelectedShadowColor}">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Border Width="13" Height="13" Margin="0,0,5,0"
+                                                                    Background="{Binding Converter={StaticResource ColorToBrushConverter}}"
+                                                                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1"/>
+                                                            <TextBlock Text="{Binding}" FontSize="11"/>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+                                        </DockPanel>
+                                    </StackPanel>
+
+                                    <!-- Track List -->
+                                    <ListBox ItemsSource="{Binding SubtitleTracks}"
+                                             SelectedItem="{Binding SelectedSubtitleTrack}"
+                                             Height="90"
+                                             Style="{StaticResource ModernListBox}"
+                                             Margin="0,0,0,6">
+                                        <ListBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <DockPanel LastChildFill="True" Margin="1">
+                                                    <CheckBox IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                                    <Button DockPanel.Dock="Right"
+                                                            Command="{Binding DataContext.RemoveSubtitleTrackCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                            CommandParameter="{Binding}"
+                                                            Background="Transparent" BorderThickness="0" Foreground="#FF5555"
+                                                            Padding="4,0" VerticalAlignment="Center">
+                                                        <TextBlock Text="✕" FontSize="10" FontWeight="Bold"/>
+                                                    </Button>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Name}" FontSize="11" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource TextPrimary}" TextTrimming="CharacterEllipsis"/>
+                                                        <TextBlock Text="{Binding Format}" FontSize="10" Foreground="{StaticResource TextSecondary}"/>
+                                                    </StackPanel>
+                                                </DockPanel>
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+                                    </ListBox>
+
+                                    <Button Content="＋ Import Subtitle"
+                                            Command="{Binding ImportSubtitleCommand}"
+                                            Style="{StaticResource ModernButton}"
+                                            Height="28" FontSize="11"/>
+                                </StackPanel>
+                            </Expander>
+
+                            <!-- ── Logo & Watermark ── -->
+                            <Expander Style="{StaticResource PropertiesExpander}" IsExpanded="True">
+                                <Expander.Header>
+                                    <TextBlock Text="🖼  Logo &amp; Watermark" FontSize="16" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimary}" VerticalAlignment="Center"/>
+                                </Expander.Header>
+                                <StackPanel>
+                                    <Button Content="Set Logo..."
+                                            Command="{Binding SelectLogoCommand}"
+                                            Style="{StaticResource ModernButton}"
+                                            Height="28" FontSize="11"
+                                            HorizontalAlignment="Left" Padding="12,4"
+                                            Margin="0,0,0,8"/>
+
+                                    <StackPanel Visibility="{Binding LogoPath, Converter={StaticResource NotNullToVisibilityConverter}}">
+                                        <DockPanel>
+                                            <TextBlock Text="Scale" DockPanel.Dock="Left" FontSize="10" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center" Width="38"/>
+                                            <TextBlock Text="{Binding LogoScale, StringFormat={}{0:P0}}" DockPanel.Dock="Right" Width="38" TextAlignment="Right" FontSize="10" VerticalAlignment="Center"/>
+                                            <Slider Minimum="0.1" Maximum="3.0" Value="{Binding LogoScale}" TickFrequency="0.1" IsSnapToTickEnabled="True"/>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Expander>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Export Buttons (always visible, pinned to bottom) -->
+                    <StackPanel Grid.Row="2" Margin="10">
+                        <Button Content="✨ AI Publisher"
+                                Command="{Binding OpenPublisherCommand}"
+                                Style="{StaticResource ModernButton}"
+                                Height="32" Margin="0,0,0,8" Background="#1A00C1D4" FontSize="12" FontWeight="SemiBold"/>
+
+                        <Button Content="Export Video"
+                                Command="{Binding ExportVideoCommand}"
+                                Style="{StaticResource ModernButton}"
+                                Height="38" FontSize="13" FontWeight="Bold"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Status Bar -->
+        <Border x:Name="StatusBar" Grid.Row="2" Background="{StaticResource SecondaryBackground}" 
+                BorderBrush="{StaticResource BorderColor}" BorderThickness="0,1,0,0" 
+                Height="25">
+            <Grid>
+                <ProgressBar Value="{Binding RenderingProgress}" 
+                             Visibility="{Binding IsRendering, Converter={StaticResource BooleanToVisibilityConverter}}"
+                             Foreground="{StaticResource AccentColor}" 
+                             Background="#33FFFFFF" 
+                             BorderThickness="0"
+                             Opacity="0.5"/>
+                
+                <TextBlock Text="{Binding StatusMessage}" 
+                           Foreground="{StaticResource TextSecondary}"
+                           VerticalAlignment="Center" 
+                           Margin="10,0"/>
+            </Grid>
+        </Border>
+        <!-- Rendering Overlay (Prevents user interaction during export) -->
+        <Grid Visibility="{Binding IsRendering, Converter={StaticResource BooleanToVisibilityConverter}}" Grid.RowSpan="3" Panel.ZIndex="999">
+            <Border Background="#CC000000" />
+            <Border Background="{StaticResource SecondaryBackground}" 
+                    BorderBrush="{StaticResource AccentColor}" 
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Width="350" Height="180"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel VerticalAlignment="Center" Margin="30">
+                    <TextBlock Text="Exporting Video" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
+                    <TextBlock Text="Please wait while we process your video..." FontSize="12" Foreground="{StaticResource TextSecondary}" HorizontalAlignment="Center" Margin="0,0,0,20"/>
+                    
+                    <ProgressBar Value="{Binding RenderingProgress}" Height="12" Foreground="{StaticResource AccentColor}" Background="#33FFFFFF" BorderThickness="0">
+                        <ProgressBar.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="6"/>
+                            </Style>
+                        </ProgressBar.Resources>
+                    </ProgressBar>
+                    
+                    <Grid Margin="0,10,0,0">
+                        <TextBlock Text="{Binding StatusMessage}" HorizontalAlignment="Left" FontSize="11" Foreground="{StaticResource TextSecondary}"/>
+                        <TextBlock Text="{Binding RenderingProgress, StringFormat={}{0}%}" HorizontalAlignment="Right" FontSize="11" FontWeight="Bold"/>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
