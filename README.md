@@ -61,12 +61,16 @@ EditNovaFX/
 - **Windows 10 / 11** (64-bit)
 - **.NET 8 SDK** → https://dotnet.microsoft.com/download
 - **FFmpeg** — place `ffmpeg.exe` + `ffprobe.exe` in a `ffmpeg\` subfolder next to the exe
+- **Whisper.cpp** *(optional, for AI subtitles)* — place `whisper.exe` in a `whisper-bin-x64\` subfolder next to the exe
+- **Subtitle Parser** *(optional, for Scripture subtitles)* — download from [EditNovaFX-SRT-Generator](https://github.com/nlci-lab/EditNovaFX-SRT-Generator/releases/tag/v0.1.1-alpha), place in a `subtitle-parser\` subfolder
+
+> **Tip:** All tool paths can be configured in **File → Settings** if you prefer a different location.
 
 ### Build & Run
 
 ```bash
 # Clone the repo
-git clone https://github.com/YOUR_USERNAME/EditNovaFX.git
+git clone https://github.com/nlci-lab/EditNovaFX.git
 cd EditNovaFX
 
 # Restore packages
