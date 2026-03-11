@@ -40,8 +40,11 @@ namespace VideoEditor.Services
 
         private SettingsService()
         {
-            string baseDir = AppDomain.CurrentDomain.BaseDirectory;
-            _settingsFilePath = Path.Combine(baseDir, "settings.json");
+            // Save settings to %AppData%\EditNovaFX\ (user-writable, persists across updates)
+            string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+            string settingsDir = Path.Combine(appData, "EditNovaFX");
+            Directory.CreateDirectory(settingsDir);
+            _settingsFilePath = Path.Combine(settingsDir, "settings.json");
             CurrentSettings = LoadPlatformSettings();
         }
 

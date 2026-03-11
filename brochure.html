@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EditNovaFX Brochure</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
+
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 210mm;
+            height: 297mm; /* A4 size */
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #ffffff;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .page {
+            width: 210mm;
+            height: 297mm;
+            position: relative;
+            background-image: url('file:///C:/Users/Jacob Thomas/.gemini/antigravity/brain/03e0fdde-470e-47b6-9701-51de248099a1/brochure_bg_1773240286022.png');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            padding: 12mm 15mm;
+            box-sizing: border-box;
+        }
+
+        /* Glassmorphism Overlay */
+        .glass-panel {
+            background: rgba(15, 20, 35, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 10mm;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8mm;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 5mm;
+        }
+
+        .logo-box {
+            width: 16mm;
+            height: 16mm;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 5mm;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .logo-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .title-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-container h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(to right, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title-container p {
+            margin: 2px 0 0 0;
+            font-size: 14px;
+            color: #94a3b8;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .hero-image-container {
+            width: 100%;
+            height: 55mm; /* Decreased height further */
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.15);
+            margin-bottom: 5mm; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            background: #000;
+            position: relative;
+        }
+
+        .hero-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Maintain aspect ratio so no cropping occurs */
+            object-position: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4mm; /* Reduced gap to fit content */
+            flex-grow: 1;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 5mm;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s;
+        }
+
+        .feature-icon {
+            font-size: 22px;
+            margin-bottom: 3mm;
+            background: rgba(255,255,255,0.1);
+            width: 10mm;
+            height: 10mm;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+        }
+
+        .feature-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 2mm 0;
+            color: #e2e8f0;
+        }
+
+        .feature-desc {
+            font-size: 12px;
+            line-height: 1.5;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: auto;
+            text-align: center;
+            padding-top: 5mm;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 11px;
+            color: #64748b;
+            letter-spacing: 1px;
+        }
+
+        /* Specific Icon Colors */
+        .icon-timeline { color: #38bdf8; }
+        .icon-ai { color: #a78bfa; }
+        .icon-scripture { color: #34d399; }
+        .icon-youtube { color: #fb7185; }
+        .icon-export { color: #facc15; }
+        .icon-subtitle { color: #fb923c; }
+
+    </style>
+</head>
+<body>
+    <div class="page">
+        <div class="glass-panel">
+            
+            <div class="header">
+                <div class="logo-box">
+                    <img src="file:///C:/Users/Jacob Thomas/.gemini/antigravity/brain/03e0fdde-470e-47b6-9701-51de248099a1/media__1773241567383.png" alt="EditNovaFX Logo" />
+                </div>
+                <div class="title-container">
+                    <h1>EditNovaFX</h1>
+                    <p>Professional Video Editing Studio</p>
+                </div>
+            </div>
+
+            <!-- This is where the uploaded screenshot goes -->
+            <div class="hero-image-container">
+                <img src="file:///C:/Users/Jacob Thomas/.gemini/antigravity/brain/03e0fdde-470e-47b6-9701-51de248099a1/media__1773241575929.png" alt="EditNovaFX Interface">
+            </div>
+
+            <div class="grid">
+                
+                <div class="feature-card">
+                    <div class="feature-icon icon-timeline">🎞️</div>
+                    <h3 class="feature-title">Intuitive Timeline Editing</h3>
+                    <p class="feature-desc">Layer videos, images, and audio across intuitive tracks. Features precise drag-and-drop mechanics, seamless splitting, ripple deletion, and frame-accurate trimming with real-time preview.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-ai">🤖</div>
+                    <h3 class="feature-title">AI-Powered Transcription</h3>
+                    <p class="feature-desc">Generate highly accurate subtitles automatically from your audio tracks using local Whisper AI models. 100% offline processing ensures your unreleased footage never goes to the cloud.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-scripture">📖</div>
+                    <h3 class="feature-title">Scripture Subtitle Automation</h3>
+                    <p class="feature-desc">Uniquely tailored for ministry and localization. Feed an audio file and a standard USFM Bible file to automatically extract verse text and synchronize it seamlessly to the audio.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-subtitle">📝</div>
+                    <h3 class="feature-title">Advanced Subtitling</h3>
+                    <p class="feature-desc">Full support for importing native SRT files. Control fonts, sizes, colors, outlines, drop shadows, and exact screen positioning to make your captions match your brand.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-youtube">🚀</div>
+                    <h3 class="feature-title">Direct-to-YouTube</h3>
+                    <p class="feature-desc">Export and upload directly to your YouTube channel in one seamless motion. Set titles, descriptions, tags, and automatically apply Custom Thumbnails right from the app.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-export">⚙️</div>
+                    <h3 class="feature-title">Customizable FFmpeg Engine</h3>
+                    <p class="feature-desc">Powered by an industry-standard rendering backend. Export up to pristine 4K resolution, choose cinematic or standard frame rates, and easily overlay logos and watermarks.</p>
+                </div>
+
+            </div>
+
+            <div class="footer">
+                EDIT LOCALLY. CREATE GLOBALLY. &nbsp;&nbsp;|&nbsp;&nbsp; BUILT WITH .NET 8 & WPF &nbsp;&nbsp;|&nbsp;&nbsp; JACOB'S STUDIO
+            </div>
+
+        </div>
+    </div>
+</body>
+</html>
