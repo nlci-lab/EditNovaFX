@@ -3,9 +3,12 @@
 
 > A full-featured video editing desktop app for Windows ,
 > YouTube publishing, multi-track timeline editing, and rich subtitle support.
-> Developed by **Jacob's Studio**.
+> Developed by **NLCI Lab**.
 
 ---
+
+> ⚠️ **Note on Windows Security**: Since this is an un-signed alpha release, Windows may show a security warning when you run the downloaded executables. You may need to right-click the `.exe` file, go to **Properties**, check **"Unblock"**, and click Apply before running.
+
 
 ## ✨ Key Features
 
@@ -162,7 +165,15 @@ The following are **not** committed (see `.gitignore`):
 
 ---
 
+## 📧 Contact & Support
+
+For technical support or inquiries, please contact:
+- **Jacob Thomas**: [jacob_thomas@nlife.in](mailto:jacob_thomas@nlife.in)
+- **Benjamin Varghese**: [benjamin_varghese@nlife.in](mailto:benjamin_varghese@nlife.in)
+
+---
+
 ## 🪪 License
 
 Source code provided for review and educational purposes.  
-© 2026 Jacob's Studio. All rights reserved.
+© 2026 NLCI Lab. All rights reserved.

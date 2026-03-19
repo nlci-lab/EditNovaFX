@@ -81,11 +81,94 @@
                 
                 <DataGrid Grid.Row="1" ItemsSource="{Binding PreviewSegments}" AutoGenerateColumns="False" 
                           Background="#222" Foreground="White" BorderThickness="0" CanUserAddRows="False"
-                          RowBackground="#222" AlternatingRowBackground="#2A2A2A">
+                          RowBackground="#222" AlternatingRowBackground="#2A2A2A"
+                          HorizontalGridLinesBrush="#333" VerticalGridLinesBrush="#333">
+                    <DataGrid.Resources>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Background" Value="#333"/>
+                            <Setter Property="Foreground" Value="White"/>
+                            <Setter Property="Padding" Value="10,5"/>
+                            <Setter Property="FontWeight" Value="Bold"/>
+                            <Setter Property="BorderBrush" Value="#444"/>
+                            <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        </Style>
+                        <Style x:Key="AdjBtn" TargetType="Button" BasedOn="{StaticResource ModernButton}">
+                            <Setter Property="Width" Value="22"/>
+                            <Setter Property="Height" Value="22"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="FontSize" Value="14"/>
+                            <Setter Property="Background" Value="#444"/>
+                        </Style>
+                    </DataGrid.Resources>
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="ID" Binding="{Binding SegmentId}" Width="60" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="Start" Binding="{Binding StartTime, StringFormat=\{0:F3\}}" Width="70" IsReadOnly="True"/>
-                        <DataGridTextColumn Header="End" Binding="{Binding EndTime, StringFormat=\{0:F3\}}" Width="70" IsReadOnly="True"/>
+                        <DataGridTextColumn Header="ID" Binding="{Binding SegmentId}" Width="50" IsReadOnly="True"/>
+                        
+                        <!-- Start Time Adjustment -->
+                        <DataGridTemplateColumn Header="Start" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="-" Style="{StaticResource AdjBtn}" Margin="0,0,5,0">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                    <Binding Path="."/>
+                                                    <Binding Source="-0.1"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <Button.Command>
+                                                <Binding Path="DataContext.AdjustStartTimeCommand" RelativeSource="{RelativeSource AncestorType=DataGrid}"/>
+                                            </Button.Command>
+                                        </Button>
+                                        <TextBlock Text="{Binding StartTime, StringFormat=\{0:F3\}}" Foreground="#00C1D4" VerticalAlignment="Center" Width="50" TextAlignment="Center" FontWeight="SemiBold"/>
+                                        <Button Content="+" Style="{StaticResource AdjBtn}" Margin="5,0,0,0">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                    <Binding Path="."/>
+                                                    <Binding Source="0.1"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <Button.Command>
+                                                <Binding Path="DataContext.AdjustStartTimeCommand" RelativeSource="{RelativeSource AncestorType=DataGrid}"/>
+                                            </Button.Command>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
+                        <!-- End Time Adjustment -->
+                        <DataGridTemplateColumn Header="End" Width="120">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                        <Button Content="-" Style="{StaticResource AdjBtn}" Margin="0,0,5,0">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                    <Binding Path="."/>
+                                                    <Binding Source="-0.1"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <Button.Command>
+                                                <Binding Path="DataContext.AdjustEndTimeCommand" RelativeSource="{RelativeSource AncestorType=DataGrid}"/>
+                                            </Button.Command>
+                                        </Button>
+                                        <TextBlock Text="{Binding EndTime, StringFormat=\{0:F3\}}" Foreground="#00C1D4" VerticalAlignment="Center" Width="50" TextAlignment="Center" FontWeight="SemiBold"/>
+                                        <Button Content="+" Style="{StaticResource AdjBtn}" Margin="5,0,0,0">
+                                            <Button.CommandParameter>
+                                                <MultiBinding Converter="{StaticResource MultiValueConverter}">
+                                                    <Binding Path="."/>
+                                                    <Binding Source="0.1"/>
+                                                </MultiBinding>
+                                            </Button.CommandParameter>
+                                            <Button.Command>
+                                                <Binding Path="DataContext.AdjustEndTimeCommand" RelativeSource="{RelativeSource AncestorType=DataGrid}"/>
+                                            </Button.Command>
+                                        </Button>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+
                         <DataGridTextColumn Header="Text" Binding="{Binding Text, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>

@@ -283,7 +283,7 @@
 
                 <!-- Footer -->
                 <Border Grid.Row="3" Padding="14,10" BorderBrush="#1A2A3A" BorderThickness="0,1,0,0">
-                    <TextBlock Text="EditNovaFX v1.0  ·  Jacob's Studio"
+                    <TextBlock Text="EditNovaFX v1.0  ·  NLCI Lab"
                                FontSize="11" Foreground="#445566" TextAlignment="Center"/>
                 </Border>
             </Grid>
@@ -469,9 +469,9 @@
                                       ItemTemplate="{StaticResource FaqTemplate}"/>
                     </StackPanel>
 
-                    <!-- ── Legacy plain text content (fallback for About etc.) ── -->
-                    <StackPanel Visibility="{Binding SelectedTopic.HasRichContent,
-                                    Converter={StaticResource InvertBooleanToVisibilityConverter},
+                    <!-- ── Main Description Content ── -->
+                    <StackPanel Visibility="{Binding SelectedTopic.Content,
+                                    Converter={StaticResource NotNullToVisibilityConverter},
                                     FallbackValue=Collapsed}">
                         <TextBlock Text="{Binding SelectedTopic.Content}"
                                    FontSize="14" Foreground="#BBBBBB"

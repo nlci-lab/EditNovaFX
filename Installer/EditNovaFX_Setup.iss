@@ -3,7 +3,7 @@
 
 #define MyAppName "EditNovaFX"
 #define MyAppVersion "0.0.1-alpha"
-#define MyAppPublisher "Jacob's Studio"
+#define MyAppPublisher "NLCI Lab"
 #define MyAppExeName "EditNovaFX.exe"
 #define MyAppURL "https://github.com/nlci-lab/EditNovaFX"
 

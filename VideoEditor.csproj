@@ -8,6 +8,9 @@
     <AssemblyName>EditNovaFX</AssemblyName>
     <Product>EditNovaFX</Product>
     <Title>EditNovaFX</Title>
+    <Company>NLCI Lab</Company>
+    <Authors>NLCI Lab</Authors>
+    <Copyright>© 2026 NLCI Lab</Copyright>
     <ApplicationIcon>Assets\app_icon.ico</ApplicationIcon>
   </PropertyGroup>
 

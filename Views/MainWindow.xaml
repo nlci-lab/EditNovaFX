@@ -20,6 +20,8 @@
         <KeyBinding Key="N" Modifiers="Control" Command="{Binding NewProjectCommand}"/>
         <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenProjectCommand}"/>
         <KeyBinding Key="I" Modifiers="Control" Command="{Binding ImportMediaCommand}"/>
+        <KeyBinding Key="E" Modifiers="Control" Command="{Binding ExportVideoCommand}"/>
+        <KeyBinding Key="Delete" Command="{Binding RemoveClipCommand}" CommandParameter="{Binding SelectedClip}"/>
     </Window.InputBindings>
     
     <Window.DataContext>
@@ -38,9 +40,9 @@
             <!-- <Image Source="/Assets/app_logo.png" Height="24" Margin="10,0,10,0" VerticalAlignment="Center" SnapsToDevicePixels="True"/> -->
             <Menu Background="Transparent" Foreground="{StaticResource TextPrimary}">
                 <MenuItem Header="File">
-                    <MenuItem Header="New Project" Command="{Binding NewProjectCommand}"/>
-                    <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}"/>
-                    <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}"/>
+                    <MenuItem Header="New Project" Command="{Binding NewProjectCommand}" InputGestureText="Ctrl+N"/>
+                    <MenuItem Header="Open Project..." Command="{Binding OpenProjectCommand}" InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="Save Project" Command="{Binding SaveProjectCommand}" InputGestureText="Ctrl+S"/>
                     <MenuItem Header="Save Project As..." Command="{Binding SaveProjectAsCommand}"/>
                      <MenuItem Header="Settings..." Command="{Binding OpenSettingsCommand}"/>
                     <MenuItem Header="Exit" Click="Exit_Click"/>
@@ -50,11 +52,11 @@
                     <MenuItem Header="Redo" Command="{Binding RedoCommand}" InputGestureText="Ctrl+Y"/>
                 </MenuItem>
                 <MenuItem Header="Import">
-                    <MenuItem Header="Import Media..." Command="{Binding ImportMediaCommand}"/>
+                    <MenuItem Header="Import Media..." Command="{Binding ImportMediaCommand}" InputGestureText="Ctrl+I"/>
                     <MenuItem Header="Import Subtitle..." Command="{Binding ImportSubtitleCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Export">
-                    <MenuItem Header="Export Video..." Command="{Binding ExportVideoCommand}"/>
+                    <MenuItem Header="Export Video..." Command="{Binding ExportVideoCommand}" InputGestureText="Ctrl+E"/>
                 </MenuItem>
                 <MenuItem Header="Tools">
                     <MenuItem Header="Audio to Subtitle" Command="{Binding OpenAudioToSubtitleCommand}"/>

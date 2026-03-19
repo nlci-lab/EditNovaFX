@@ -6,12 +6,18 @@ using System.Text.RegularExpressions;
 
 namespace VideoEditor.Services
 {
-    public class VerseSegment
+    public partial class VerseSegment : CommunityToolkit.Mvvm.ComponentModel.ObservableObject
     {
         public string SegmentId { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
-        public double StartTime { get; set; }
-        public double EndTime { get; set; }
+        [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+        private string _text = string.Empty;
+        
+        [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+        private double _startTime;
+        
+        [CommunityToolkit.Mvvm.ComponentModel.ObservableProperty]
+        private double _endTime;
+        
         public double Duration => EndTime - StartTime;
     }
 

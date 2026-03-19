@@ -20,6 +20,7 @@
         <converters:InvertBooleanConverter x:Key="InvertBooleanConverter"/>
         <converters:InvertBooleanToVisibilityConverter x:Key="InvertBooleanToVisibilityConverter"/>
         <converters:StringComparisonVisibilityConverter x:Key="StringComparisonVisibilityConverter"/>
+        <converters:MultiValueConverter x:Key="MultiValueConverter"/>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 
         <!-- Color Palette -->

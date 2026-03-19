@@ -96,6 +96,53 @@ namespace VideoEditor.ViewModels
         }
 
         [RelayCommand]
+        private void AdjustStartTime(object? parameter)
+        {
+            if (parameter is not object[] values || values.Length < 2) return;
+            if (values[0] is not VerseSegment segment || values[1] is not string deltaStr) return;
+            if (!double.TryParse(deltaStr, out double delta)) return;
+
+            int index = PreviewSegments.IndexOf(segment);
+            double newStart = segment.StartTime + delta;
+
+            // Don't allow start to exceed end
+            if (newStart >= segment.EndTime) return;
+            
+            // Don't allow start to go below 0
+            if (newStart < 0) newStart = 0;
+
+            segment.StartTime = newStart;
+
+            // Ripple to previous segment's end time
+            if (index > 0)
+            {
+                PreviewSegments[index - 1].EndTime = segment.StartTime;
+            }
+        }
+
+        [RelayCommand]
+        private void AdjustEndTime(object? parameter)
+        {
+            if (parameter is not object[] values || values.Length < 2) return;
+            if (values[0] is not VerseSegment segment || values[1] is not string deltaStr) return;
+            if (!double.TryParse(deltaStr, out double delta)) return;
+
+            int index = PreviewSegments.IndexOf(segment);
+            double newEnd = segment.EndTime + delta;
+
+            // Don't allow end to be before start
+            if (newEnd <= segment.StartTime) return;
+
+            segment.EndTime = newEnd;
+
+            // Ripple to next segment's start time
+            if (index < PreviewSegments.Count - 1)
+            {
+                PreviewSegments[index + 1].StartTime = segment.EndTime;
+            }
+        }
+
+        [RelayCommand]
         private async Task PreviewSrt()
         {
             if (string.IsNullOrEmpty(UsfmPath) || !File.Exists(UsfmPath))
@@ -281,9 +328,9 @@ namespace VideoEditor.ViewModels
                 if (saveDialog.ShowDialog() == true)
                 {
                     await Task.Run(() => File.WriteAllText(saveDialog.FileName, srtContent, Encoding.UTF8));
-                    StatusMessage = "Successfully exported.";
+                    StatusMessage = $"Successfully exported to {Path.GetFileName(saveDialog.FileName)}";
                     
-                    var result = MessageBox.Show("SRT exported. Open folder?", "Success", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                    var result = MessageBox.Show($"SRT exported successfully to:\n{saveDialog.FileName}\n\nOpen folder?", "Success", MessageBoxButton.YesNo, MessageBoxImage.Information);
                     if (result == MessageBoxResult.Yes)
                     {
                         System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{saveDialog.FileName}\"");
@@ -347,7 +394,7 @@ namespace VideoEditor.ViewModels
             return results;
         }
 
-        private string BuildSrtFromSegments(List<VerseSegment> segments)
+        private string BuildSrtFromSegments(IEnumerable<VerseSegment> segments)
         {
             StringBuilder sb = new StringBuilder();
             int index = 1;
@@ -359,13 +406,21 @@ namespace VideoEditor.ViewModels
                 sb.AppendLine();
                 index++;
             }
-            return sb.ToString();
+            return sb.ToString().Replace("\r\n", "\n").Replace("\n", "\r\n"); // Normalize to Windows CRLF for SRT
         }
 
         private string FormatTime(double seconds)
         {
-            TimeSpan t = TimeSpan.FromSeconds(seconds);
-            return string.Format("{0:D2}:{1:D2}:{2:D2},{3:D3}", t.Hours + (t.Days * 24), t.Minutes, t.Seconds, t.Milliseconds);
+            // Use Ticks for maximum precision and round to nearest millisecond to avoid 0.99999 precision errors
+            long ticks = (long)Math.Round(seconds * TimeSpan.TicksPerSecond);
+            if (ticks < 0) ticks = 0;
+            TimeSpan t = TimeSpan.FromTicks(ticks);
+            
+            return string.Format("{0:D2}:{1:D2}:{2:D2},{3:D3}", 
+                t.Hours + (t.Days * 24), 
+                t.Minutes, 
+                t.Seconds, 
+                t.Milliseconds);
         }
     }
 }

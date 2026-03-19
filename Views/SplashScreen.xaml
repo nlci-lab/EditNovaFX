@@ -122,29 +122,12 @@
                             </Ellipse.Fill>
                         </Ellipse>
 
-                        <!-- Icon circle -->
-                        <Ellipse Width="74" Height="74" HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <Ellipse.Fill>
-                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                    <GradientStop Color="#1A6FAA" Offset="0"/>
-                                    <GradientStop Color="#007ACC" Offset="0.5"/>
-                                    <GradientStop Color="#00A8E8" Offset="1"/>
-                                </LinearGradientBrush>
-                            </Ellipse.Fill>
-                            <Ellipse.Effect>
-                                <DropShadowEffect BlurRadius="16" Color="#007ACC" Opacity="0.6" ShadowDepth="0"/>
-                            </Ellipse.Effect>
-                        </Ellipse>
-
-                        <!-- Play triangle icon -->
-                        <Path HorizontalAlignment="Center" VerticalAlignment="Center"
-                              Fill="White" Margin="5,0,0,0"
-                              Data="M0,0 L28,16 L0,32 Z"
-                              Width="28" Height="32" Stretch="Uniform">
-                            <Path.Effect>
-                                <DropShadowEffect BlurRadius="4" Opacity="0.4" ShadowDepth="1"/>
-                            </Path.Effect>
-                        </Path>
+                        <!-- Main Image Logo -->
+                        <Image Source="/Assets/app_logo.png" Height="80" HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <Image.Effect>
+                                <DropShadowEffect BlurRadius="15" Color="#007ACC" Opacity="0.5" ShadowDepth="0"/>
+                            </Image.Effect>
+                        </Image>
                     </Grid>
 
                     <!-- App name -->
@@ -241,7 +224,7 @@
                                Foreground="#2A4A5A"
                                HorizontalAlignment="Left"
                                VerticalAlignment="Center"/>
-                    <TextBlock Text="© 2026 Jacob's Studio"
+                    <TextBlock Text="© 2026 NLCI Lab"
                                FontSize="10" FontFamily="Segoe UI"
                                Foreground="#2A4A5A"
                                HorizontalAlignment="Right"

@@ -148,13 +148,30 @@ namespace VideoEditor.ViewModels
             MediaLibrary = new ObservableCollection<MediaItem>(CurrentProject.MediaItems);
             TimelineTracks = new ObservableCollection<TimelineTrack>(CurrentProject.Tracks);
             SubtitleTracks = new ObservableCollection<SubtitleTrack>(CurrentProject.SubtitleTracks);
+            
+            // Clear volatile UI state
+            SelectedMediaItem = null;
+            SelectedClip = null;
+            SelectedSubtitleTrack = null;
+            ActiveSubtitlePreviews.Clear();
+            PlayheadPosition = TimeSpan.Zero;
+            IsPlaying = false;
+            
             LogoPath = null;
             LogoScale = 1.0;
             LogoMargin = new System.Windows.Thickness(0);
+            
             StatusMessage = "New project created";
 
             _undoRedoService.Clear();
             _undoRedoService.SaveState(CurrentProject);
+            
+            // Force UI refreshes
+            UpdateSubtitles();
+            RefreshTimeline();
+            
+            OnPropertyChanged(nameof(CanUndo));
+            OnPropertyChanged(nameof(CanRedo));
         }
 
         private void SaveState()

@@ -405,8 +405,28 @@ namespace VideoEditor.ViewModels
                 }
             };
 
+            var parsingProcess = new HelpTopic
+            {
+                Title = "Subtitle Parsing Process",
+                Icon = "⚙️",
+                Summary = "Understand the technical workflow behind transforming Bible scripture into synchronized subtitles.",
+                Steps = new()
+                {
+                    new() { Number = 1, Emoji = "📖", Title = "USFM Analysis", Detail = "The parser scans the USFM file for markers like \\v (verse), \\c (chapter), and \\p (paragraph) to extract the raw text structure." },
+                    new() { Number = 2, Emoji = "⏱️", Title = "Timecode Matching", Detail = "It then reads the timing file (text/label format) and aligns each verse text with its corresponding start and end timestamps." },
+                    new() { Number = 3, Emoji = "✂️", Title = "Text Segmentation", Detail = "Depending on the 'Mode' selected, the text is either kept as full verses or split into smaller phrases or individual words for better readability." },
+                    new() { Number = 4, Emoji = "📤", Title = "SRT/timeline Construction", Detail = "The synced data is converted into the industry-standard SubRip (SRT) format and injected as a new track on the EditNovaFX timeline." },
+                },
+                Tips = new()
+                {
+                    "Ensure your USFM file and Timing file correspond to the exact same chapter for accurate alignment.",
+                    "The Subtitle Parser tool runs as an external high-performance process for maximum reliability."
+                }
+            };
+
             topic.SubTopics.Add(generator);
             topic.SubTopics.Add(converter);
+            topic.SubTopics.Add(parsingProcess);
             Topics.Add(topic);
         }
 
@@ -419,8 +439,8 @@ namespace VideoEditor.ViewModels
             {
                 Title = "Support",
                 Icon = "📧",
-                Summary = "Need help or want to report a bug? Contact our development team directly.",
-                Content = "For technical support, feature requests, or bug reports, please email our developers:\n\n" +
+                Summary = "Need help or want to report a bug? Contact the NLCI Lab team directly.",
+                Content = "For technical support, feature requests, or bug reports, please contact:\n\n" +
                           "• Jacob Thomas: jacob_thomas@nlife.in\n" +
                           "• Benjamin Varghese: benjamin_varghese@nlife.in\n\n" +
                           "Please include your project details and a description of the issue."
@@ -548,12 +568,16 @@ namespace VideoEditor.ViewModels
             {
                 Title = "About EditNovaFX",
                 Icon = "ℹ️",
-                Summary = "EditNovaFX is a professional desktop video editor, designed for creators of all skill levels.",
-                Content = "EditNovaFX v1.1.0\n\nDeveloped by Jacob's Studio\n\nBuilt with .NET 8, WPF, FFmpeg, Whisper AI, and Scripture Subtitle Tools.\n\nFor support or feedback, contact the developer.",
+                Summary = "EditNovaFX is a powerful and user-friendly desktop video editing application designed for creators, educators, and media professionals.",
+                Content = "The goal of EditNovaFX is to bring video editing, subtitle creation, and publishing tools into one unified platform, allowing users to create professional-quality videos faster and with less effort.\n\n" +
+                          "EditNovaFX v1.1.0\n\n" +
+                          "Created by NLCI Lab",
                 Tips = new()
                 {
-                    "Keep the app updated for the latest bug fixes and new AI features.",
-                    "All processing happens locally on your PC — your videos are never uploaded without your permission."
+                    "🤖 AI Features: Auto-generate professional subtitles and metadata.",
+                    "🔒 Privacy First: All processing happens locally. Your media is never uploaded.",
+                    "⚡ Modern Core: Built with .NET 8 and FFmpeg for maximum performance.",
+                    "Keep your application updated for the latest feature releases and security fixes."
                 }
             };
             Topics.Add(topic);
