@@ -124,6 +124,12 @@ namespace VideoEditor.ViewModels
         [ObservableProperty]
         private string _selectedShadowColor = "#000000";
 
+        [ObservableProperty]
+        private bool _hasBackgroundBox = false;
+
+        [ObservableProperty]
+        private double _backgroundBoxOpacity = 0.5;
+
         public MainViewModel()
         {
             _projectService = new ProjectService();
@@ -1215,6 +1221,8 @@ namespace VideoEditor.ViewModels
             SelectedSubtitleTrack.OutlineWidth = OutlineWidth;
             SelectedSubtitleTrack.ShadowWidth = ShadowWidth;
             SelectedSubtitleTrack.ShadowColor = SelectedShadowColor;
+            SelectedSubtitleTrack.HasBackgroundBox = HasBackgroundBox;
+            SelectedSubtitleTrack.BackgroundBoxOpacity = BackgroundBoxOpacity;
 
             UpdateSubtitles();
         }
@@ -1232,6 +1240,8 @@ namespace VideoEditor.ViewModels
                 OutlineWidth = value.OutlineWidth;
                 ShadowWidth = value.ShadowWidth;
                 SelectedShadowColor = value.ShadowColor;
+                HasBackgroundBox = value.HasBackgroundBox;
+                BackgroundBoxOpacity = value.BackgroundBoxOpacity;
             }
         }
 
@@ -1285,5 +1295,7 @@ namespace VideoEditor.ViewModels
         partial void OnOutlineWidthChanged(double value) => UpdateSubtitleSettings();
         partial void OnShadowWidthChanged(double value) => UpdateSubtitleSettings();
         partial void OnSelectedShadowColorChanged(string value) => UpdateSubtitleSettings();
+        partial void OnHasBackgroundBoxChanged(bool value) => UpdateSubtitleSettings();
+        partial void OnBackgroundBoxOpacityChanged(double value) => UpdateSubtitleSettings();
     }
 }

@@ -35,6 +35,11 @@ namespace VideoEditor.Models
         public double ShadowWidth { get; set; } = 1.0;
         public string ShadowColor { get; set; } = "#000000";
 
+        // Background Box
+        public bool HasBackgroundBox { get; set; } = false;
+        public string BackgroundBoxColor { get; set; } = "#000000";
+        public double BackgroundBoxOpacity { get; set; } = 0.5;
+
 
         public SubtitleTrack()
         {

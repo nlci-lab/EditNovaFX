@@ -716,7 +716,12 @@ namespace VideoEditor.Services
                 if (marginR < 0) marginR = 0;
             }
 
-            writer.WriteLine($"Style: Default,{fontName},{fontSize},{assColor},&H000000FF,{outlineColor},{outlineColor},{bold},{italic},0,0,100,100,0,0,1,{outW},{shadW},{track.Alignment},{marginL},{marginR},{marginV},1");
+            int borderStyle = track.HasBackgroundBox ? 3 : 1;
+            string backColour = track.HasBackgroundBox
+                ? BackgroundColorToAss(track.BackgroundBoxColor, track.BackgroundBoxOpacity)
+                : "&H00000000";
+
+            writer.WriteLine($"Style: Default,{fontName},{fontSize},{assColor},&H000000FF,{outlineColor},{backColour},{bold},{italic},0,0,100,100,0,0,{borderStyle},{outW},{shadW},{track.Alignment},{marginL},{marginR},{marginV},1");
             writer.WriteLine();
 
             writer.WriteLine("[Events]");
@@ -746,6 +751,22 @@ namespace VideoEditor.Services
         private string FormatASSTime(TimeSpan time)
         {
             return $"{(int)time.TotalHours}:{time.Minutes:00}:{time.Seconds:00}.{time.Milliseconds / 10:00}";
+        }
+
+        private string BackgroundColorToAss(string hexColor, double opacity)
+        {
+            // ASS alpha: 00 = fully opaque, FF = fully transparent
+            int alpha = (int)((1.0 - Math.Clamp(opacity, 0.0, 1.0)) * 255);
+
+            if (string.IsNullOrEmpty(hexColor) || !hexColor.StartsWith("#") || hexColor.Length < 7)
+                return $"&H{alpha:X2}000000";
+
+            string r = hexColor.Substring(1, 2);
+            string g = hexColor.Substring(3, 2);
+            string b = hexColor.Substring(5, 2);
+
+            // ASS colour format is &HAABBGGRR
+            return $"&H{alpha:X2}{b}{g}{r}";
         }
 
         private string ColorToAss(string hexColor)
