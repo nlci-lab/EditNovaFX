@@ -29,6 +29,30 @@ namespace VideoEditor.ViewModels
         [ObservableProperty] private double _outlineWidth;
         [ObservableProperty] private double _shadowWidth;
         [ObservableProperty] private string _shadowColor = "#000000";
+        [ObservableProperty] private bool _hasBackgroundBox;
+        [ObservableProperty] private double _backgroundBoxOpacity;
+
+        partial void OnHasBackgroundBoxChanged(bool value)
+        {
+            OnPropertyChanged(nameof(BackgroundBrush));
+            OnPropertyChanged(nameof(BackgroundPadding));
+        }
+
+        partial void OnBackgroundBoxOpacityChanged(double value)
+        {
+            OnPropertyChanged(nameof(BackgroundBrush));
+        }
+
+        public System.Windows.Media.Brush BackgroundBrush =>
+            HasBackgroundBox
+                ? new System.Windows.Media.SolidColorBrush(
+                    System.Windows.Media.Color.FromArgb(
+                        (byte)(BackgroundBoxOpacity * 255), 0, 0, 0))
+                : System.Windows.Media.Brushes.Transparent;
+
+        public System.Windows.Thickness BackgroundPadding =>
+            HasBackgroundBox ? new System.Windows.Thickness(8, 4, 8, 4) : new System.Windows.Thickness(0);
+
         public SubtitleTrack? Track { get; set; }
     }
 
@@ -1049,6 +1073,8 @@ namespace VideoEditor.ViewModels
                     existing.OutlineWidth = item.Track.OutlineWidth;
                     existing.ShadowWidth = item.Track.ShadowWidth;
                     existing.ShadowColor = item.Track.ShadowColor;
+                    existing.HasBackgroundBox = item.Track.HasBackgroundBox;
+                    existing.BackgroundBoxOpacity = item.Track.BackgroundBoxOpacity;
                 }
                 else
                 {
@@ -1069,6 +1095,8 @@ namespace VideoEditor.ViewModels
                         OutlineWidth = item.Track.OutlineWidth,
                         ShadowWidth = item.Track.ShadowWidth,
                         ShadowColor = item.Track.ShadowColor,
+                        HasBackgroundBox = item.Track.HasBackgroundBox,
+                        BackgroundBoxOpacity = item.Track.BackgroundBoxOpacity,
                         Track = item.Track
                     });
                 }
