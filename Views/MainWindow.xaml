@@ -297,7 +297,8 @@
                                                                    TextAlignment="{Binding TextAlignment}"
                                                                    HorizontalAlignment="Left"
                                                                    VerticalAlignment="Top"
-                                                                   Background="Transparent"
+                                                                   Background="{Binding BackgroundBrush}"
+                                                                   Padding="{Binding BackgroundPadding}"
                                                                    Tag="{Binding Track}"
                                                                    PreviewMouseLeftButtonDown="Subtitle_PreviewMouseLeftButtonDown"
                                                                    PreviewMouseMove="Subtitle_PreviewMouseMove"
@@ -681,6 +682,15 @@
                                                     </DataTemplate>
                                                 </ComboBox.ItemTemplate>
                                             </ComboBox>
+                                        </DockPanel>
+
+                                        <!-- Background Box -->
+                                        <CheckBox Content="Background Box" IsChecked="{Binding HasBackgroundBox}"
+                                                  Foreground="White" FontSize="11" Margin="0,4,0,4"/>
+                                        <DockPanel Margin="0,0,0,8" IsEnabled="{Binding HasBackgroundBox}">
+                                            <TextBlock Text="Opacity" DockPanel.Dock="Left" FontSize="10" Foreground="{StaticResource TextSecondary}" VerticalAlignment="Center" Width="46"/>
+                                            <TextBlock Text="{Binding BackgroundBoxOpacity, StringFormat={}{0:P0}}" DockPanel.Dock="Right" Width="32" TextAlignment="Right" FontSize="10" VerticalAlignment="Center"/>
+                                            <Slider Minimum="0" Maximum="1" Value="{Binding BackgroundBoxOpacity}" TickFrequency="0.05" IsSnapToTickEnabled="True"/>
                                         </DockPanel>
                                     </StackPanel>
 
