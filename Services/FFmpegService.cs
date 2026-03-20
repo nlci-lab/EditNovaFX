@@ -673,7 +673,7 @@ namespace VideoEditor.Services
             }
         }
 
-        private void WriteASS(StreamWriter writer, SubtitleTrack track, int width, int height)
+        internal void WriteASS(StreamWriter writer, SubtitleTrack track, int width, int height)
         {
             writer.WriteLine("[Script Info]");
             writer.WriteLine("ScriptType: v4.00+");
@@ -753,7 +753,7 @@ namespace VideoEditor.Services
             return $"{(int)time.TotalHours}:{time.Minutes:00}:{time.Seconds:00}.{time.Milliseconds / 10:00}";
         }
 
-        private string BackgroundColorToAss(string hexColor, double opacity)
+        internal string BackgroundColorToAss(string hexColor, double opacity)
         {
             // ASS alpha: 00 = fully opaque, FF = fully transparent
             int alpha = (int)((1.0 - Math.Clamp(opacity, 0.0, 1.0)) * 255);
