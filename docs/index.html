@@ -395,6 +395,9 @@
         }
 
         .workflow-node {
+            --node-a: #0f766e;
+            --node-b: #14b8a6;
+            --node-glow: rgba(20, 184, 166, 0.35);
             position: absolute;
             left: var(--x);
             top: var(--y);
@@ -403,14 +406,15 @@
         }
 
         .workflow-title {
-            border: 1px solid var(--border);
-            background: white;
-            color: var(--text-dark);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: linear-gradient(135deg, var(--node-a) 0%, var(--node-b) 100%);
+            color: white;
             border-radius: 999px;
-            padding: 0.65rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 700;
-            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+            padding: 0.85rem 1.4rem;
+            font-size: 1.02rem;
+            font-weight: 800;
+            letter-spacing: 0.01em;
+            box-shadow: 0 10px 24px var(--node-glow);
             cursor: default;
             transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
             white-space: nowrap;
@@ -419,8 +423,8 @@
         .workflow-node:hover .workflow-title,
         .workflow-node:focus-within .workflow-title {
             transform: translateY(-2px);
-            border-color: var(--primary-light);
-            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.2);
+            border-color: rgba(255, 255, 255, 0.75);
+            box-shadow: 0 14px 28px var(--node-glow);
         }
 
         .workflow-detail {
@@ -983,33 +987,29 @@
             <div class="workflow-ring" aria-hidden="true"></div>
             <div class="workflow-center">EditNovaFX<br>Workflow</div>
             <ul class="workflow-nodes">
-                <li class="workflow-node" style="--x: 50%; --y: 8%;">
+                <li class="workflow-node" style="--x: 50%; --y: 9%; --node-a: #0284c7; --node-b: #38bdf8; --node-glow: rgba(56, 189, 248, 0.4);">
                     <button class="workflow-title" type="button">Import</button>
                     <div class="workflow-detail">Upload scripture text, audio, timing, and optional visuals.</div>
                 </li>
-                <li class="workflow-node" style="--x: 77%; --y: 20%;">
+                <li class="workflow-node" style="--x: 78%; --y: 25%; --node-a: #9333ea; --node-b: #c084fc; --node-glow: rgba(192, 132, 252, 0.4);">
                     <button class="workflow-title" type="button">Generate</button>
                     <div class="workflow-detail">Create subtitles with AI or import existing SRT files.</div>
                 </li>
-                <li class="workflow-node" style="--x: 90%; --y: 50%;">
+                <li class="workflow-node" style="--x: 78%; --y: 75%; --node-a: #ea580c; --node-b: #fb923c; --node-glow: rgba(251, 146, 60, 0.4);">
                     <button class="workflow-title" type="button">Arrange</button>
                     <div class="workflow-detail">Place clips and subtitle layers on timeline tracks.</div>
                 </li>
-                <li class="workflow-node" style="--x: 77%; --y: 80%;">
+                <li class="workflow-node" style="--x: 50%; --y: 91%; --node-a: #16a34a; --node-b: #4ade80; --node-glow: rgba(74, 222, 128, 0.4);">
                     <button class="workflow-title" type="button">Customize</button>
                     <div class="workflow-detail">Tune subtitle font, size, color, position, and timing.</div>
                 </li>
-                <li class="workflow-node" style="--x: 50%; --y: 92%;">
+                <li class="workflow-node" style="--x: 22%; --y: 75%; --node-a: #e11d48; --node-b: #fb7185; --node-glow: rgba(251, 113, 133, 0.4);">
                     <button class="workflow-title" type="button">Preview</button>
                     <div class="workflow-detail">Watch full playback and make quick refinements.</div>
                 </li>
-                <li class="workflow-node" style="--x: 23%; --y: 80%;">
+                <li class="workflow-node" style="--x: 22%; --y: 25%; --node-a: #0f766e; --node-b: #2dd4bf; --node-glow: rgba(45, 212, 191, 0.4);">
                     <button class="workflow-title" type="button">Publish</button>
                     <div class="workflow-detail">Export video locally or publish directly to YouTube.</div>
-                </li>
-                <li class="workflow-node" style="--x: 10%; --y: 50%;">
-                    <button class="workflow-title" type="button">Repeat</button>
-                    <div class="workflow-detail">Reuse your setup to scale chapter and book production.</div>
                 </li>
             </ul>
         </div>
