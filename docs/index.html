@@ -352,60 +352,115 @@
             background: white;
         }
 
-        .workflow-steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 3rem;
+        .workflow-wheel {
+            margin: 3rem auto 0;
+            width: min(100%, 760px);
+            aspect-ratio: 1;
             position: relative;
+            animation: fadeInUp 0.7s ease-out;
         }
 
-        @media (min-width: 768px) {
-            .workflow-steps::before {
-                content: '';
-                position: absolute;
-                top: 2rem;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: linear-gradient(90deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
-                z-index: 0;
-            }
-        }
-
-        .workflow-step {
-            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            border: 1px solid var(--border);
-            text-align: center;
-            position: relative;
-            z-index: 1;
-            animation: fadeInUp 0.6s ease-out;
-        }
-
-        .workflow-step-number {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background: var(--accent);
-            color: white;
+        .workflow-ring {
+            position: absolute;
+            inset: 14%;
+            border: 2px dashed rgba(15, 118, 110, 0.25);
             border-radius: 50%;
-            line-height: 40px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.05) 0%, rgba(255, 255, 255, 0) 62%);
+        }
+
+        .workflow-center {
+            position: absolute;
+            inset: 37%;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.95rem;
             font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
+            letter-spacing: 0.02em;
+            box-shadow: 0 12px 32px rgba(15, 118, 110, 0.25);
+            z-index: 2;
+            padding: 0.75rem;
         }
 
-        .workflow-step h4 {
-            font-size: 1.05rem;
-            margin-bottom: 0.5rem;
+        .workflow-nodes {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            inset: 0;
+        }
+
+        .workflow-node {
+            --count: 7;
+            --radius: 36%;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: rotate(calc(360deg / var(--count) * var(--i))) translate(var(--radius)) rotate(calc(-360deg / var(--count) * var(--i)));
+            transform-origin: 0 0;
+            z-index: 3;
+        }
+
+        .workflow-title {
+            border: 1px solid var(--border);
+            background: white;
             color: var(--text-dark);
+            border-radius: 999px;
+            padding: 0.65rem 1rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.1);
+            cursor: default;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+            white-space: nowrap;
         }
 
-        .workflow-step p {
-            font-size: 0.85rem;
-            color: #64748b;
+        .workflow-node:hover .workflow-title,
+        .workflow-node:focus-within .workflow-title {
+            transform: translateY(-2px);
+            border-color: var(--primary-light);
+            box-shadow: 0 10px 24px rgba(15, 118, 110, 0.2);
+        }
+
+        .workflow-detail {
+            position: absolute;
+            top: calc(100% + 0.6rem);
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            width: min(240px, 72vw);
+            background: #0f172a;
+            color: #f8fafc;
+            border-radius: 0.65rem;
+            padding: 0.7rem 0.8rem;
+            font-size: 0.82rem;
+            line-height: 1.45;
+            box-shadow: 0 18px 36px rgba(2, 6, 23, 0.35);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.18s ease, transform 0.18s ease;
+        }
+
+        .workflow-detail::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            width: 10px;
+            height: 10px;
+            background: #0f172a;
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .workflow-node:hover .workflow-detail,
+        .workflow-node:focus-within .workflow-detail {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
         }
 
         /* ──────────────────────────────────────────────────────────────── */
@@ -743,7 +798,45 @@
                 padding: 0.85rem 1.5rem;
             }
 
-            .workflow-steps::before {
+            .workflow-wheel {
+                aspect-ratio: auto;
+                width: 100%;
+            }
+
+            .workflow-ring,
+            .workflow-center {
+                display: none;
+            }
+
+            .workflow-nodes {
+                position: static;
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 0.85rem;
+            }
+
+            .workflow-node {
+                position: static;
+                transform: none;
+            }
+
+            .workflow-title {
+                width: 100%;
+                text-align: left;
+                padding: 0.85rem 1rem;
+            }
+
+            .workflow-detail {
+                position: static;
+                opacity: 1;
+                visibility: visible;
+                transform: none;
+                width: 100%;
+                margin-top: 0.55rem;
+                pointer-events: auto;
+            }
+
+            .workflow-detail::before {
                 display: none;
             }
 
@@ -784,7 +877,7 @@
                 <a href="https://github.com/nlci-lab/EditNovaFX/releases" class="btn btn-primary">📥 Download Alpha</a>
                 <a href="https://github.com/nlci-lab/EditNovaFX/issues" class="btn btn-secondary">💡 Share Ideas</a>
             </div>
-            <div class="hero-badge">✨ v0.0.1-alpha | Available now on Windows</div>
+            <div class="hero-badge">✨ v0.0.2-alpha | Available now on Windows</div>
         </div>
     </section>
 
@@ -888,43 +981,40 @@
     <!-- ════════════════════════════════════════════════════════════════ -->
     <section class="workflow" id="workflow">
         <h2>Workflow</h2>
-        <p class="subtitle">From raw files to published video: a guided, straightforward process.</p>
-        <div class="workflow-steps">
-            <div class="workflow-step">
-                <div class="workflow-step-number">1</div>
-                <h4>Import</h4>
-                <p>Upload scripture, audio, timing, visuals</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">2</div>
-                <h4>Generate</h4>
-                <p>Create or import subtitles from SRT</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">3</div>
-                <h4>Arrange</h4>
-                <p>Place media on timeline tracks</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">4</div>
-                <h4>Customize</h4>
-                <p>Adjust font, color, position, timing</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">5</div>
-                <h4>Preview</h4>
-                <p>Watch and refine if needed</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">6</div>
-                <h4>Publish</h4>
-                <p>Export or push to YouTube</p>
-            </div>
-            <div class="workflow-step">
-                <div class="workflow-step-number">7</div>
-                <h4>Repeat</h4>
-                <p>Reuse setup for next chapter/book</p>
-            </div>
+        <p class="subtitle">Main flow at a glance. Hover each step to see the details.</p>
+        <div class="workflow-wheel" aria-label="Workflow process diagram">
+            <div class="workflow-ring" aria-hidden="true"></div>
+            <div class="workflow-center">EditNovaFX<br>Workflow</div>
+            <ul class="workflow-nodes">
+                <li class="workflow-node" style="--i: 0;">
+                    <button class="workflow-title" type="button">Import</button>
+                    <div class="workflow-detail">Upload scripture text, audio, timing, and optional visuals.</div>
+                </li>
+                <li class="workflow-node" style="--i: 1;">
+                    <button class="workflow-title" type="button">Generate</button>
+                    <div class="workflow-detail">Create subtitles with AI or import existing SRT files.</div>
+                </li>
+                <li class="workflow-node" style="--i: 2;">
+                    <button class="workflow-title" type="button">Arrange</button>
+                    <div class="workflow-detail">Place clips and subtitle layers on timeline tracks.</div>
+                </li>
+                <li class="workflow-node" style="--i: 3;">
+                    <button class="workflow-title" type="button">Customize</button>
+                    <div class="workflow-detail">Tune subtitle font, size, color, position, and timing.</div>
+                </li>
+                <li class="workflow-node" style="--i: 4;">
+                    <button class="workflow-title" type="button">Preview</button>
+                    <div class="workflow-detail">Watch full playback and make quick refinements.</div>
+                </li>
+                <li class="workflow-node" style="--i: 5;">
+                    <button class="workflow-title" type="button">Publish</button>
+                    <div class="workflow-detail">Export video locally or publish directly to YouTube.</div>
+                </li>
+                <li class="workflow-node" style="--i: 6;">
+                    <button class="workflow-title" type="button">Repeat</button>
+                    <div class="workflow-detail">Reuse your setup to scale chapter and book production.</div>
+                </li>
+            </ul>
         </div>
     </section>
 
