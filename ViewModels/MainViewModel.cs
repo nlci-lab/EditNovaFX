@@ -536,6 +536,12 @@ namespace VideoEditor.ViewModels
                     System.Diagnostics.Debug.WriteLine($"  Video Bitrate: {settings.VideoBitrate}k");
                     System.Diagnostics.Debug.WriteLine($"  Audio Bitrate: {settings.AudioBitrate}k");
 
+                    // Keep project output settings aligned with the active export target.
+                    CurrentProject.OutputWidth = settings.Width;
+                    CurrentProject.OutputHeight = settings.Height;
+                    CurrentProject.OutputFrameRate = settings.FrameRate;
+                    CurrentProject.OutputFormat = settings.Format;
+
                     StatusMessage = "Rendering video...";
                     RenderingProgress = 0;
                     IsRendering = true;

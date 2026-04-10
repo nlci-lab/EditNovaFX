@@ -56,7 +56,8 @@
                                         </StackPanel>
 
                                         <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0">
-                                            <TextBlock Text="{Binding Width, StringFormat={}{0}p}" FontWeight="Bold" HorizontalAlignment="Right" Foreground="{StaticResource AccentColor}"/>
+                                            <TextBlock Text="{Binding ResolutionLabel}" FontWeight="Bold" HorizontalAlignment="Right" Foreground="{StaticResource AccentColor}"/>
+                                            <TextBlock Text="{Binding AspectRatio}" FontSize="10" HorizontalAlignment="Right" Foreground="{StaticResource TextSecondary}"/>
                                             <TextBlock Text="{Binding FrameRate, StringFormat={}{0}fps}" FontSize="10" HorizontalAlignment="Right" Foreground="{StaticResource TextSecondary}"/>
                                         </StackPanel>
                                     </Grid>

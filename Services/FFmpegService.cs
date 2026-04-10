@@ -512,7 +512,7 @@ namespace VideoEditor.Services
                     
                     // Use UTF8 without BOM for better compatibility with FFmpeg/libass
                     using (var writer = new StreamWriter(tempFile, false, new UTF8Encoding(false)))
-                        WriteASS(writer, track, project.OutputWidth, project.OutputHeight);
+                        WriteASS(writer, track, settings.Width, settings.Height);
 
                     // FFmpeg filter path escaping: forward slashes, escape colon for Windows, escape single quotes.
                     string esc  = tempFile.Replace("\\", "/").Replace(":", "\\:").Replace("'", "\\'");
@@ -532,10 +532,14 @@ namespace VideoEditor.Services
             {
                 var logoItem = new MediaItem(project.LogoPath, MediaType.Image);
                 int logoIdx  = GetInputIndex(logoItem);
-                double sf    = (double)settings.Width / project.OutputWidth;
-                int tw       = (int)(100.0 * project.LogoScale * sf);
-                int lx       = (int)(project.LogoX * sf);
-                int ly       = (int)(project.LogoY * sf);
+                double sourceWidth = project.OutputWidth <= 0 ? settings.Width : project.OutputWidth;
+                double sourceHeight = project.OutputHeight <= 0 ? settings.Height : project.OutputHeight;
+
+                double scaleX = (double)settings.Width / sourceWidth;
+                double scaleY = (double)settings.Height / sourceHeight;
+                int tw       = (int)(100.0 * project.LogoScale * scaleX);
+                int lx       = (int)(project.LogoX * scaleX);
+                int ly       = (int)(project.LogoY * scaleY);
 
                 filterComplex.Append($"[{logoIdx}:v]scale={tw}:-1[logo_sc];");
                 string logoOut = "[v_logo_out]";

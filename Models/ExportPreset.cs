@@ -14,6 +14,32 @@ namespace VideoEditor.Models
         public int AudioBitrate { get; set; } // kbps
         public string Icon { get; set; } = "🎬"; // For UI
 
+        public string ResolutionLabel => $"{Width}x{Height}";
+
+        public string AspectRatio
+        {
+            get
+            {
+                int gcd = GreatestCommonDivisor(Width, Height);
+                int rw = gcd == 0 ? Width : Width / gcd;
+                int rh = gcd == 0 ? Height : Height / gcd;
+                return $"{rw}:{rh}";
+            }
+        }
+
+        private static int GreatestCommonDivisor(int a, int b)
+        {
+            a = Math.Abs(a);
+            b = Math.Abs(b);
+            while (b != 0)
+            {
+                int t = b;
+                b = a % b;
+                a = t;
+            }
+            return a;
+        }
+
         public static List<ExportPreset> GetDefaultPresets()
         {
             return new List<ExportPreset>
@@ -50,6 +76,17 @@ namespace VideoEditor.Models
                     VideoBitrate = 5000,
                     AudioBitrate = 128,
                     Icon = "📱"
+                },
+                new ExportPreset
+                {
+                    Name = "Instagram Portrait",
+                    Description = "Vertical 4:5 for social feed posts",
+                    Width = 1080,
+                    Height = 1350,
+                    FrameRate = 30,
+                    VideoBitrate = 4500,
+                    AudioBitrate = 128,
+                    Icon = "🖼️"
                 },
                 new ExportPreset
                 {
