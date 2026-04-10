@@ -1,5 +1,21 @@
 # Release Notes
 
+## v0.0.2-alpha (2026-04-10)
+
+Second public alpha build of EditNovaFX.
+
+### Download
+- Installer: EditNovaFX_Setup_v0.0.2-alpha.exe
+
+### Includes
+- Self-contained Windows release build (win-x64)
+- Build metadata updated to v0.0.2-alpha
+- Fix for missing MultiValueConverter that blocked Release publish
+
+### Notes
+- This remains an alpha build and is not production-ready.
+- Please continue reporting issues and workflow feedback.
+
 ## v0.0.1-alpha (2026-03-12)
 
 Public pre-release alpha build of EditNovaFX.

@@ -206,4 +206,20 @@ namespace VideoEditor.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => throw new NotImplementedException();
     }
+
+    /// <summary>
+    /// Passes all multibinding inputs through as an object array for command parameters.
+    /// </summary>
+    public class MultiValueConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return values;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

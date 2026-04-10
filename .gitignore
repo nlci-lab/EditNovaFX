@@ -10,6 +10,7 @@ obj/
 publish/
 publish_output.zip
 InstallPackage/
+InstallerOutput/
 EditNovaFX_v1.0.0_Setup.zip
 *.zip
 

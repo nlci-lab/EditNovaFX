@@ -2,7 +2,7 @@
 ; Requires Inno Setup 6 — https://jrsoftware.org/isdl.php
 
 #define MyAppName "EditNovaFX"
-#define MyAppVersion "0.0.1-alpha"
+#define MyAppVersion "0.0.2-alpha"
 #define MyAppPublisher "NLCI Lab"
 #define MyAppExeName "EditNovaFX.exe"
 #define MyAppURL "https://github.com/nlci-lab/EditNovaFX"
