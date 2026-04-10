@@ -395,13 +395,10 @@
         }
 
         .workflow-node {
-            --count: 7;
-            --radius: 36%;
             position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: rotate(calc(360deg / var(--count) * var(--i))) translate(var(--radius)) rotate(calc(-360deg / var(--count) * var(--i)));
-            transform-origin: 0 0;
+            left: var(--x);
+            top: var(--y);
+            transform: translate(-50%, -50%);
             z-index: 3;
         }
 
@@ -986,31 +983,31 @@
             <div class="workflow-ring" aria-hidden="true"></div>
             <div class="workflow-center">EditNovaFX<br>Workflow</div>
             <ul class="workflow-nodes">
-                <li class="workflow-node" style="--i: 0;">
+                <li class="workflow-node" style="--x: 50%; --y: 8%;">
                     <button class="workflow-title" type="button">Import</button>
                     <div class="workflow-detail">Upload scripture text, audio, timing, and optional visuals.</div>
                 </li>
-                <li class="workflow-node" style="--i: 1;">
+                <li class="workflow-node" style="--x: 77%; --y: 20%;">
                     <button class="workflow-title" type="button">Generate</button>
                     <div class="workflow-detail">Create subtitles with AI or import existing SRT files.</div>
                 </li>
-                <li class="workflow-node" style="--i: 2;">
+                <li class="workflow-node" style="--x: 90%; --y: 50%;">
                     <button class="workflow-title" type="button">Arrange</button>
                     <div class="workflow-detail">Place clips and subtitle layers on timeline tracks.</div>
                 </li>
-                <li class="workflow-node" style="--i: 3;">
+                <li class="workflow-node" style="--x: 77%; --y: 80%;">
                     <button class="workflow-title" type="button">Customize</button>
                     <div class="workflow-detail">Tune subtitle font, size, color, position, and timing.</div>
                 </li>
-                <li class="workflow-node" style="--i: 4;">
+                <li class="workflow-node" style="--x: 50%; --y: 92%;">
                     <button class="workflow-title" type="button">Preview</button>
                     <div class="workflow-detail">Watch full playback and make quick refinements.</div>
                 </li>
-                <li class="workflow-node" style="--i: 5;">
+                <li class="workflow-node" style="--x: 23%; --y: 80%;">
                     <button class="workflow-title" type="button">Publish</button>
                     <div class="workflow-detail">Export video locally or publish directly to YouTube.</div>
                 </li>
-                <li class="workflow-node" style="--i: 6;">
+                <li class="workflow-node" style="--x: 10%; --y: 50%;">
                     <button class="workflow-title" type="button">Repeat</button>
                     <div class="workflow-detail">Reuse your setup to scale chapter and book production.</div>
                 </li>
