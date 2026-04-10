@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EditNovaFX – Scripture Video at Scale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0f766e;
+            --primary-light: #14b8a6;
+            --primary-dark: #0d5a52;
+            --accent: #f97316;
+            --accent-light: #fb923c;
+            --bg-dark: #0f172a;
+            --bg-light: #f8fafc;
+            --text-light: #f1f5f9;
+            --text-dark: #1e293b;
+            --border: #cbd5e1;
+            --border-dark: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* HEADER & NAVIGATION */
+        /* ──────────────────────────────────────────────────────────────── */
+        header {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(15, 118, 110, 0.15);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        nav a {
+            color: var(--text-light);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+
+        nav a:hover {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                display: none;
+            }
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* HERO SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .hero {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: var(--text-light);
+            padding: 5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 8vw, 3.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            margin-bottom: 2rem;
+            opacity: 0.95;
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid var(--text-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--text-light);
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* ANIMATIONS */
+        /* ──────────────────────────────────────────────────────────────── */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* SECTIONS */
+        /* ──────────────────────────────────────────────────────────────── */
+        section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        section h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+
+        section > .subtitle {
+            font-size: 1.1rem;
+            color: #64748b;
+            margin-bottom: 3rem;
+            max-width: 700px;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* OPPORTUNITY SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .opportunity {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%);
+            border-left: 5px solid var(--primary-light);
+        }
+
+        .opportunity h2 {
+            color: var(--primary-dark);
+        }
+
+        .opportunity-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .opportunity-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            border-top: 3px solid var(--accent);
+            animation: slideInLeft 0.6s ease-out;
+        }
+
+        .opportunity-item-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .opportunity-item h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .opportunity-item p {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* FEATURES SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .features {
+            background: var(--bg-light);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid var(--border);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .feature-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* WORKFLOW SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .workflow {
+            background: white;
+        }
+
+        .workflow-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        @media (min-width: 768px) {
+            .workflow-steps::before {
+                content: '';
+                position: absolute;
+                top: 2rem;
+                left: 0;
+                right: 0;
+                height: 2px;
+                background: linear-gradient(90deg, transparent, var(--border) 10%, var(--border) 90%, transparent);
+                z-index: 0;
+            }
+        }
+
+        .workflow-step {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(249, 115, 22, 0.1) 100%);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .workflow-step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            color: white;
+            border-radius: 50%;
+            line-height: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .workflow-step h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .workflow-step p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* COMPONENTS SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .components {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.05) 0%, rgba(249, 115, 22, 0.05) 100%);
+        }
+
+        .components h2 {
+            color: var(--primary-dark);
+        }
+
+        .component-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .component-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid var(--primary-light);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .component-item-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .component-item-desc {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* NOW vs NEXT SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .roadmap {
+            background: white;
+        }
+
+        .roadmap-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .roadmap-box {
+            border-radius: 0.75rem;
+            padding: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .roadmap-now {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1) 0%, rgba(20, 184, 166, 0.05) 100%);
+            border: 2px solid var(--primary-light);
+        }
+
+        .roadmap-next {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(249, 115, 22, 0.05) 100%);
+            border: 2px solid var(--accent);
+        }
+
+        .roadmap-box h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+        }
+
+        .roadmap-now h3 {
+            color: var(--primary-dark);
+        }
+
+        .roadmap-next h3 {
+            color: #b45309;
+        }
+
+        .roadmap-list {
+            list-style: none;
+        }
+
+        .roadmap-list li {
+            padding: 0.75rem 0;
+            padding-left: 1.75rem;
+            position: relative;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+
+        .roadmap-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            font-weight: 700;
+            color: var(--primary-light);
+        }
+
+        .roadmap-next li::before {
+            content: '→';
+            color: var(--accent);
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* PROOF SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .proof {
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.08) 0%, rgba(249, 115, 22, 0.08) 100%);
+        }
+
+        .proof h2 {
+            color: var(--primary-dark);
+        }
+
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .proof-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            border-top: 4px solid var(--accent);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .proof-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .proof-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-dark);
+        }
+
+        .proof-card p {
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* SCREENSHOT SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .screenshot {
+            background: white;
+        }
+
+        .screenshot-container {
+            margin-top: 2rem;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .screenshot-container img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #e2e8f0 100%);
+            padding: 4rem 2rem;
+            text-align: center;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .screenshot-placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .screenshot-placeholder p {
+            font-size: 1rem;
+            color: #94a3b8;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* CTA SECTION */
+        /* ──────────────────────────────────────────────────────────────── */
+        .cta {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 50%, var(--primary-light) 100%);
+            color: var(--text-light);
+            text-align: center;
+            padding: 4rem 2rem;
+            border-radius: 0.75rem;
+            margin: 4rem auto;
+            position: relative;
+            overflow: hidden;
+            max-width: 900px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .cta::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta h2 {
+            color: var(--text-light);
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            opacity: 0.95;
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* FOOTER */
+        /* ──────────────────────────────────────────────────────────────── */
+        footer {
+            background: var(--bg-dark);
+            color: var(--text-light);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+
+        .footer-section a {
+            display: block;
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            opacity: 1;
+        }
+
+        .footer-divider {
+            border-top: 1px solid var(--border-dark);
+            margin-top: 2rem;
+            padding-top: 2rem;
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-light);
+        }
+
+        /* ──────────────────────────────────────────────────────────────── */
+        /* RESPONSIVE */
+        /* ──────────────────────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            section {
+                padding: 2.5rem 1.5rem;
+            }
+
+            .hero {
+                padding: 3rem 1.5rem;
+            }
+
+            .hero h1 {
+                margin-bottom: 0.75rem;
+            }
+
+            .hero-cta {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 0.85rem 1.5rem;
+            }
+
+            .workflow-steps::before {
+                display: none;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- HEADER -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">🎬</span>
+                <span>EditNovaFX</span>
+            </div>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#workflow">Workflow</a>
+                <a href="#roadmap">Roadmap</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- HERO -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Scripture Video at Scale</h1>
+            <p class="hero-subtitle">Turn Bible translations into engaging videos. One language. One workflow. Minimal expertise needed.</p>
+            <div class="hero-cta">
+                <a href="https://github.com/nlci-lab/EditNovaFX/releases" class="btn btn-primary">📥 Download Alpha</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX/issues" class="btn btn-secondary">💡 Share Ideas</a>
+            </div>
+            <div class="hero-badge">✨ v0.0.1-alpha | Available now on Windows</div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- OPPORTUNITY -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="opportunity">
+        <h2>The Opportunity</h2>
+        <p class="subtitle">Your language community can have a thriving YouTube presence—without large time investment, heavy lifting, or specialized teams.</p>
+        <div class="opportunity-list">
+            <div class="opportunity-item">
+                <div class="opportunity-item-icon">⏱️</div>
+                <h3>Save Weeks</h3>
+                <p>What takes teams 30+ days manually with multiple tools happens in hours in EditNovaFX.</p>
+            </div>
+            <div class="opportunity-item">
+                <div class="opportunity-item-icon">🎯</div>
+                <h3>Automate Publishing</h3>
+                <p>Once configured, push scripture videos directly to YouTube. No channel management headaches.</p>
+            </div>
+            <div class="opportunity-item">
+                <div class="opportunity-item-icon">👥</div>
+                <h3>Minimal Skills Needed</h3>
+                <p>Simple, intuitive workflow built for non-specialists. Wizard-guided tools coming soon.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- FEATURES -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="features" id="features">
+        <h2>What You Get</h2>
+        <p class="subtitle">Built for scripture video production from the ground up.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🎬</div>
+                <h3>Multi-Track Timeline</h3>
+                <p>Arrange video, audio, and subtitles side-by-side. Trim, split, drag—all visual and intuitive.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Scripture Subtitles</h3>
+                <p>Import SFM/USFM files paired with timing data. Merge and generate SRT subtitles automatically.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Subtitle Generation</h3>
+                <p>Local Whisper.cpp or OpenAI cloud. Auto-generate subtitles from audio in 20+ languages.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">✏️</div>
+                <h3>Subtitle Styling</h3>
+                <p>Font, size, color, position, shadow, outline. Fine-tune every pixel of subtitle appearance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎨</div>
+                <h3>Background Media</h3>
+                <p>Layer images or video in the background. Loop and sync with your audio and subtitle timing.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📤</div>
+                <h3>YouTube Publishing</h3>
+                <p>Export and publish straight to YouTube. Metadata generation, custom thumbnails included.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- COMPONENTS -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="components">
+        <h2>What You Bring</h2>
+        <p class="subtitle">5 core inputs. EditNovaFX handles the rest.</p>
+        <div class="component-list">
+            <div class="component-item">
+                <div class="component-item-title">📖 Scripture Text</div>
+                <div class="component-item-desc">SFM/USFM files (Paratext integration coming)</div>
+            </div>
+            <div class="component-item">
+                <div class="component-item-title">🎙️ Audio Recording</div>
+                <div class="component-item-desc">Voice-over or existing narration</div>
+            </div>
+            <div class="component-item">
+                <div class="component-item-title">⏰ Timing Data</div>
+                <div class="component-item-desc">Verse-level timing (merged into SRT)</div>
+            </div>
+            <div class="component-item">
+                <div class="component-item-title">🖼️ Visuals (Optional)</div>
+                <div class="component-item-desc">Background images or video</div>
+            </div>
+            <div class="component-item">
+                <div class="component-item-title">🎵 Music (Optional)</div>
+                <div class="component-item-desc">Background or ambient audio track</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- WORKFLOW -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="workflow" id="workflow">
+        <h2>Workflow</h2>
+        <p class="subtitle">From raw files to published video: a guided, straightforward process.</p>
+        <div class="workflow-steps">
+            <div class="workflow-step">
+                <div class="workflow-step-number">1</div>
+                <h4>Import</h4>
+                <p>Upload scripture, audio, timing, visuals</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">2</div>
+                <h4>Generate</h4>
+                <p>Create or import subtitles from SRT</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">3</div>
+                <h4>Arrange</h4>
+                <p>Place media on timeline tracks</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">4</div>
+                <h4>Customize</h4>
+                <p>Adjust font, color, position, timing</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">5</div>
+                <h4>Preview</h4>
+                <p>Watch and refine if needed</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">6</div>
+                <h4>Publish</h4>
+                <p>Export or push to YouTube</p>
+            </div>
+            <div class="workflow-step">
+                <div class="workflow-step-number">7</div>
+                <h4>Repeat</h4>
+                <p>Reuse setup for next chapter/book</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- PROOF -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="proof">
+        <h2>Minimally Tested. Not Production-Ready Yet.</h2>
+        <p class="subtitle">This is an alpha release. App has been tested in controlled environments. Not ready for production.</p>
+        <div class="proof-grid">
+            <div class="proof-card">
+                <div class="proof-icon">📍</div>
+                <h4>End-to-End Testing</h4>
+                <p>Tested in one language with full workflow validation across all core features.</p>
+            </div>
+            <div class="proof-card">
+                <div class="proof-icon">🌍</div>
+                <h4>Multilingual Demo</h4>
+                <p>Live demonstration with multiple teams using EditNovaFX in their own languages. It worked.</p>
+            </div>
+            <div class="proof-card">
+                <div class="proof-icon">✅</div>
+                <h4>Team-Tested Workflow</h4>
+                <p>Shaped by real scripture video production needs from translation and engagement teams.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- SCREENSHOTS -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="screenshot">
+        <h2>See It In Action</h2>
+        <p class="subtitle">Intuitive interface designed for scripture video production.</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+            <div class="screenshot-container">
+                <img src="app.png" alt="EditNovaFX main editor interface">
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.95rem; color: #64748b; font-weight: 600;">Main Editor with Timeline & Subtitles</p>
+            </div>
+            <div class="screenshot-container">
+                <img src="splash.png" alt="EditNovaFX splash screen">
+                <p style="text-align: center; margin-top: 1rem; font-size: 0.95rem; color: #64748b; font-weight: 600;">Welcome & Launch Experience</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- NOW vs NEXT -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="roadmap" id="roadmap">
+        <h2>Now & Next</h2>
+        <p class="subtitle">Transparent view of what's available today and what's coming.</p>
+        <div class="roadmap-container">
+            <div class="roadmap-box roadmap-now">
+                <h3>✅ Available Now</h3>
+                <ul class="roadmap-list">
+                    <li>Multi-track timeline editing</li>
+                    <li>SRT subtitle import & generation</li>
+                    <li>Scripture subtitle workflow (SFM + timing)</li>
+                    <li>Local/cloud AI transcription</li>
+                    <li>Subtitle styling & positioning</li>
+                    <li>Export (landscape)</li>
+                    <li>YouTube publishing automation</li>
+                </ul>
+            </div>
+            <div class="roadmap-box roadmap-next">
+                <h3>🚀 Coming Soon</h3>
+                <ul class="roadmap-list">
+                    <li>Additional aspect ratios (portrait for Shorts/Instagram)</li>
+                    <li>In-app scripture + timing merge to SRT</li>
+                    <li>Paratext integration for SFM auto-detection</li>
+                    <li>Visual timing editor (Audacity-style)</li>
+                    <li>Wizard-guided workflows</li>
+                    <li>And more based on team feedback <a href="https://github.com/nlci-lab/EditNovaFX/issues" style="color: inherit; text-decoration: underline; font-weight: 600;">→ View roadmap</a></li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- CTA -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <section class="cta">
+        <div class="cta-content">
+            <h2>Ready to Bring Scripture to Video?</h2>
+            <p>Download the alpha, test the workflow, and let us know what you think.</p>
+            <div class="hero-cta">
+                <a href="https://github.com/nlci-lab/EditNovaFX/releases" class="btn btn-primary">📥 Download Alpha</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX" class="btn btn-secondary">⭐ Star on GitHub</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <!-- FOOTER -->
+    <!-- ════════════════════════════════════════════════════════════════ -->
+    <footer>
+        <footer-content>
+            <div class="footer-section">
+                <h4>Product</h4>
+                <a href="https://github.com/nlci-lab/EditNovaFX/releases">Download</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX">Source Code</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX/issues">Report Issues</a>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <a href="https://github.com/nlci-lab/EditNovaFX/blob/main/README.md">Documentation</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX/issues">Feature Requests</a>
+                <a href="https://github.com/nlci-lab">NLCI Lab</a>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <a href="https://github.com/nlci-lab">GitHub Organization</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX">GitHub Repository</a>
+            </div>
+        </footer-content>
+        <div class="footer-divider"></div>
+        <div class="footer-bottom">
+            <span>© 2026 NLCI Lab. EditNovaFX is open source.</span>
+            <div class="footer-links">
+                <a href="https://github.com/nlci-lab/EditNovaFX/blob/main/LICENSE">License</a>
+                <a href="https://github.com/nlci-lab/EditNovaFX/blob/main/README.md">Privacy</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
